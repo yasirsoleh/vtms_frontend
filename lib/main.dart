@@ -17,7 +17,7 @@ class VtmsApp extends StatelessWidget {
         primarySwatch: Colors.red,
       ),
       routes: <String, WidgetBuilder>{
-        '/': (BuildContext context) => const LoginPage()
+        '/': (BuildContext context) => const LoginPage(),
       },
       debugShowCheckedModeBanner: false,
     );
