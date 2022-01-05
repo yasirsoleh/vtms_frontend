@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vtms_frontend/pages/detections/detection_details_page.dart';
+import 'package:vtms_frontend/pages/detections/view_detection_page.dart';
 
 class ListDetectionsPage extends StatefulWidget {
   const ListDetectionsPage({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _ListDetectionsPageState extends State<ListDetectionsPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const DetectionDetailsPage()));
+                    builder: (context) => const ViewDetectionPage()));
           },
         );
       },

@@ -4,7 +4,10 @@ import 'package:vtms_frontend/pages/cameras/add_camera_page.dart';
 import 'package:vtms_frontend/pages/cameras/list_cameras_page.dart';
 import 'package:vtms_frontend/pages/detections/list_detections_page.dart';
 import 'package:vtms_frontend/pages/routes/list_routes_page.dart';
-import 'package:vtms_frontend/pages/users/login_page.dart';
+import 'package:vtms_frontend/pages/users/change_password_user_page.dart';
+import 'package:vtms_frontend/pages/users/list_users_page.dart';
+import 'package:vtms_frontend/pages/users/login_user_page.dart';
+import 'package:vtms_frontend/pages/users/view_profile_user_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -118,24 +121,39 @@ class _HomePageState extends State<HomePage> {
       ListTile(
         leading: const Icon(Icons.person),
         title: const Text('Your Name von Aguero'),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ViewProfileUserPage()));
+        },
       ),
       ListTile(
         leading: const Icon(Icons.group),
         title: const Text('Users'),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const ListUsersPage()));
+        },
       ),
       ListTile(
         leading: const Icon(Icons.password),
         title: const Text('Change Password'),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ChangePasswordUserPage()));
+        },
       ),
       ListTile(
         leading: const Icon(Icons.logout),
         title: const Text('Logout'),
-        onTap: () async {
-          Navigator.pop(context,
-              MaterialPageRoute(builder: (context) => const LoginPage()));
+        onTap: () {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginUserPage()),
+              (route) => false);
         },
       ),
     ];

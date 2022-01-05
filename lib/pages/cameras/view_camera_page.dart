@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:vtms_frontend/pages/cameras/edit_camera_page.dart';
 
-class DetectionDetailsPage extends StatelessWidget {
-  const DetectionDetailsPage({Key? key}) : super(key: key);
+class ViewCameraPage extends StatelessWidget {
+  const ViewCameraPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detection Details'),
+        title: const Text('Camera Details'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const EditCameraPage()));
+            },
+            icon: const Icon(Icons.edit),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.delete),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -17,38 +33,47 @@ class DetectionDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
             Text(
-              'Plate Number',
-              textScaleFactor: 1,
-            ),
-            Text(
-              'TW7155',
-              textScaleFactor: 2,
-              //style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Timestamp',
-              textScaleFactor: 1,
-            ),
-            Text(
-              '10/12/2022 10.00 PM',
-              textScaleFactor: 2,
-              //style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
               'Camera Name',
               textScaleFactor: 1,
             ),
             Text(
-              'Main Gate 7',
+              'Main Gate 1',
               textScaleFactor: 2,
               //style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
-              'Direction',
+              'Token',
+              textScaleFactor: 1,
+            ),
+            Text(
+              '52|fVYh2Rnxn0gcNS0ecLh30GEoRK6g8jkCJ5Uw48Yk',
+              textScaleFactor: 2,
+              //style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Traffic Direction',
               textScaleFactor: 1,
             ),
             Text(
               'Outbound',
+              textScaleFactor: 2,
+              //style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Latitude',
+              textScaleFactor: 1,
+            ),
+            Text(
+              '3.547966172323439',
+              textScaleFactor: 2,
+              //style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Longitude',
+              textScaleFactor: 1,
+            ),
+            Text(
+              '103.43754957238477',
               textScaleFactor: 2,
               //style: TextStyle(fontWeight: FontWeight.bold),
             ),

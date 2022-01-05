@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:vtms_frontend/pages/users/edit_user_page.dart';
 
-class CameraDetailsPage extends StatelessWidget {
-  const CameraDetailsPage({Key? key}) : super(key: key);
+class ViewUserPage extends StatelessWidget {
+  const ViewUserPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Camera Details'),
+        title: const Text('User Details'),
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const EditUserPage()));
+            },
             icon: const Icon(Icons.edit),
           ),
           IconButton(
@@ -27,38 +33,20 @@ class CameraDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
             Text(
-              'Camera Name',
+              'Name',
               textScaleFactor: 1,
             ),
             Text(
-              'Main Gate 1',
+              'Mohammad Alif Yasir',
               textScaleFactor: 2,
               //style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
-              'Traffic Direction',
+              'Usermame',
               textScaleFactor: 1,
             ),
             Text(
-              'Outbound',
-              textScaleFactor: 2,
-              //style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Latitude',
-              textScaleFactor: 1,
-            ),
-            Text(
-              '3.547966172323439',
-              textScaleFactor: 2,
-              //style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Longitude',
-              textScaleFactor: 1,
-            ),
-            Text(
-              '103.43754957238477',
+              'yasirsoleh',
               textScaleFactor: 2,
               //style: TextStyle(fontWeight: FontWeight.bold),
             ),

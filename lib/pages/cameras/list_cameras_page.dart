@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vtms_frontend/pages/cameras/camera_details_page.dart';
+import 'package:vtms_frontend/pages/cameras/view_camera_page.dart';
 
 class ListCamerasPage extends StatefulWidget {
   const ListCamerasPage({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _ListCamerasPageState extends State<ListCamerasPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const CameraDetailsPage()));
+                    builder: (context) => const ViewCameraPage()));
           },
         );
       },

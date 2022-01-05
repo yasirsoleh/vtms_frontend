@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class RouteDetailsPage extends StatelessWidget {
-  const RouteDetailsPage({Key? key}) : super(key: key);
+class ViewRoutePage extends StatelessWidget {
+  const ViewRoutePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

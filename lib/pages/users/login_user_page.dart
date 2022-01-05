@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vtms_frontend/pages/home_page.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginUserPage extends StatelessWidget {
+  const LoginUserPage({Key? key}) : super(key: key);
 
   List<Widget> createLoginForm({required BuildContext context}) {
     return [

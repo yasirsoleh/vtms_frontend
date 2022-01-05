@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vtms_frontend/pages/routes/routes_details_page.dart';
+import 'package:vtms_frontend/pages/routes/view_routes_page.dart';
 
 class ListRoutesPage extends StatefulWidget {
   const ListRoutesPage({Key? key}) : super(key: key);
@@ -19,10 +19,8 @@ class _ListRoutesPageState extends State<ListRoutesPage> {
           title: const Text('TW7155'),
           trailing: const Icon(Icons.arrow_forward_ios),
           onTap: () async {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const RouteDetailsPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const ViewRoutePage()));
           },
         );
       },

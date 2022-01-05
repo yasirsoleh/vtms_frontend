@@ -2,27 +2,28 @@
 
 import 'package:flutter/material.dart';
 
-class AddCameraPage extends StatefulWidget {
-  const AddCameraPage({Key? key}) : super(key: key);
+class EditCameraPage extends StatefulWidget {
+  const EditCameraPage({Key? key}) : super(key: key);
 
   @override
-  State<AddCameraPage> createState() => _AddCameraPageState();
+  State<EditCameraPage> createState() => _EditCameraPageState();
 }
 
-class _AddCameraPageState extends State<AddCameraPage> {
+class _EditCameraPageState extends State<EditCameraPage> {
   String _traffic_direction = 'inbound';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Add New Camera'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.save),
-            ),
-          ]),
+        title: const Text('Edit Camera'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.save),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
