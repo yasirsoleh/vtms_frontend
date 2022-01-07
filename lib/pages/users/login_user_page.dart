@@ -4,39 +4,6 @@ import 'package:vtms_frontend/pages/home_page.dart';
 
 class LoginUserPage extends StatelessWidget {
   const LoginUserPage({Key? key}) : super(key: key);
-
-  List<Widget> createLoginForm({required BuildContext context}) {
-    return [
-      TextFormField(
-        decoration: const InputDecoration(
-          border: UnderlineInputBorder(),
-          labelText: 'Username',
-        ),
-      ),
-      TextFormField(
-        obscureText: true,
-        decoration: const InputDecoration(
-          border: UnderlineInputBorder(),
-          labelText: 'Password',
-        ),
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      SizedBox(
-        width: double.infinity,
-        height: 40,
-        child: ElevatedButton(
-          child: const Text('Login'),
-          onPressed: () async {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HomePage()));
-          },
-        ),
-      ),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,9 +33,37 @@ class LoginUserPage extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
-            child: Column(
-              children: createLoginForm(context: context),
-            ),
+            child: Column(children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Username',
+                ),
+              ),
+              TextFormField(
+                obscureText: true,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Password',
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: 40,
+                child: ElevatedButton(
+                  child: const Text('Login'),
+                  onPressed: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()));
+                  },
+                ),
+              ),
+            ]),
           ),
         ],
       ),
