@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 
 class Camera extends Equatable {
   final String id;
+  final String name;
   final String? plain_text_token;
   final String traffic_direction;
   final String latitude;
@@ -14,6 +15,7 @@ class Camera extends Equatable {
 //create constructor for Camera
   const Camera({
     required this.id,
+    required this.name,
     this.plain_text_token,
     required this.traffic_direction,
     required this.latitude,
@@ -24,16 +26,18 @@ class Camera extends Equatable {
 
   factory Camera.fromJson(Map<String, dynamic> json) => Camera(
         id: json["id"].toString(),
+        name: json["name"] as String,
         plain_text_token: json["plain_text_token"] as String,
         traffic_direction: json["traffic_direction"] as String,
         latitude: json["latitude"] as String,
         longitude: json["longitude"] as String,
-        created_at: DateTime.parse(json["created_at"]),
-        updated_at: DateTime.parse(json["updated_at"]),
+        created_at: DateTime.parse(json["created_at"] as String),
+        updated_at: DateTime.parse(json["updated_at"] as String),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "name": name,
         "plain_text_token": plain_text_token,
         "traffic_direction": traffic_direction,
         "latitude": latitude,
@@ -45,6 +49,7 @@ class Camera extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        name,
         plain_text_token,
         traffic_direction,
         latitude,

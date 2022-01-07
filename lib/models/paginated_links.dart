@@ -9,10 +9,12 @@ class PaginatedLinks extends Equatable {
   const PaginatedLinks({this.first, this.last, this.prev, this.next});
 
   factory PaginatedLinks.fromJson(Map<String, dynamic> json) => PaginatedLinks(
-      first: Uri.parse(json['first'].toString()),
-      last: Uri.parse(json['last'].toString()),
-      prev: Uri.parse(json['prev'].toString()),
-      next: Uri.parse(json['next'].toString()));
+        first:
+            (json['first'] != null) ? Uri.parse(json['first'] as String) : null,
+        last: (json['last'] != null) ? Uri.parse(json['last'] as String) : null,
+        prev: (json['prev'] != null) ? Uri.parse(json['prev'] as String) : null,
+        next: (json['next'] != null) ? Uri.parse(json['next'] as String) : null,
+      );
 
   Map<String, dynamic> toJson() => {
         'first': first.toString(),

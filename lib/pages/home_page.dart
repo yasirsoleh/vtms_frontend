@@ -93,7 +93,9 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return ListRoutesPage();
       case 2:
-        return ListCamerasPage();
+        return ListCamerasPage(
+          currentUser: widget.currentUser,
+        );
       default:
         return ListDetectionsPage();
     }
