@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vtms_frontend/models/current_user.dart';
+import 'package:vtms_frontend/models/user.dart';
 import 'package:vtms_frontend/pages/cameras/add_camera_page.dart';
 import 'package:vtms_frontend/pages/cameras/list_cameras_page.dart';
 import 'package:vtms_frontend/pages/detections/list_detections_page.dart';
@@ -8,9 +12,14 @@ import 'package:vtms_frontend/pages/users/change_password_user_page.dart';
 import 'package:vtms_frontend/pages/users/list_users_page.dart';
 import 'package:vtms_frontend/pages/users/login_user_page.dart';
 import 'package:vtms_frontend/pages/users/view_profile_user_page.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final CurrentUser currentUser;
+  const HomePage({
+    Key? key,
+    required this.currentUser,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,6 +27,28 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  late Future<User> futureUser;
+
+  Future<User> fetchUser() async {
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "Bearer ${widget.currentUser.token}",
+    };
+    final response = await http.get(Uri.parse('http://localhost/api/users/'),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    futureUser = fetchUser();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -120,20 +151,38 @@ class _HomePageState extends State<HomePage> {
       ),
       ListTile(
         leading: const Icon(Icons.person),
-        title: const Text('Your Name von Aguero'),
+        title: FutureBuilder<User>(
+          future: futureUser,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Text(snapshot.data!.name);
+            }
+            return Text(widget.currentUser.user.name);
+          },
+        ),
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ViewProfileUserPage()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ViewProfileUserPage(currentUser: widget.currentUser)))
+              .then((_) {
+            setState(() {
+              futureUser = fetchUser();
+            });
+          });
         },
       ),
       ListTile(
         leading: const Icon(Icons.group),
         title: const Text('Users'),
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const ListUsersPage()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ListUsersPage(
+                        currentUser: widget.currentUser,
+                      )));
         },
       ),
       ListTile(

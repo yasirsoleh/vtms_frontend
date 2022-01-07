@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vtms_frontend/pages/users/edit_user_page.dart';
+import 'package:vtms_frontend/pages/users/edit_profile_user_page.dart';
 
 class ViewUserPage extends StatelessWidget {
   const ViewUserPage({Key? key}) : super(key: key);
@@ -13,10 +13,10 @@ class ViewUserPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const EditUserPage()));
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => const EditUserPage()));
             },
             icon: const Icon(Icons.edit),
           ),

@@ -1,17 +1,38 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:vtms_frontend/models/current_user.dart';
+import 'package:vtms_frontend/models/user.dart';
 import 'package:vtms_frontend/pages/users/add_user_page.dart';
 import 'package:vtms_frontend/pages/users/view_user_page.dart';
+import 'package:http/http.dart' as http;
 
 class ListUsersPage extends StatefulWidget {
-  const ListUsersPage({Key? key}) : super(key: key);
+  final CurrentUser currentUser;
+  const ListUsersPage({Key? key, required this.currentUser}) : super(key: key);
 
   @override
   State<ListUsersPage> createState() => _ListUsersPageState();
 }
 
 class _ListUsersPageState extends State<ListUsersPage> {
+  Future<User> fetchUser() async {
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "Bearer ${widget.currentUser.token}",
+    };
+    final response = await http.get(Uri.parse('http://localhost/api/users/'),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
