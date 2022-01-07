@@ -52,63 +52,64 @@ class _ViewProfileUserPageState extends State<ViewProfileUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('My Profile'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditProfileUserPage(
-                      currentUser: widget.currentUser,
-                    ),
+      appBar: AppBar(
+        title: const Text('My Profile'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditProfileUserPage(
+                    currentUser: widget.currentUser,
                   ),
-                ).then((_) {
-                  setState(() {
-                    futureUser = fetchUser();
-                  });
-                });
-              },
-              icon: const Icon(Icons.edit),
-            ),
-          ],
-        ),
-        body: FutureBuilder<User>(
-          future: futureUser,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Name',
-                      textScaleFactor: 1,
-                    ),
-                    Text(
-                      snapshot.data!.name,
-                      textScaleFactor: 2,
-                    ),
-                    const Text(
-                      'Username',
-                      textScaleFactor: 1,
-                    ),
-                    Text(
-                      snapshot.data!.username,
-                      textScaleFactor: 2,
-                    ),
-                  ],
                 ),
-              );
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
-            return const CircularProgressIndicator();
-          },
-        ));
+              ).then((_) {
+                setState(() {
+                  futureUser = fetchUser();
+                });
+              });
+            },
+            icon: const Icon(Icons.edit),
+          ),
+        ],
+      ),
+      body: FutureBuilder<User>(
+        future: futureUser,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Name',
+                    textScaleFactor: 1,
+                  ),
+                  Text(
+                    snapshot.data!.name,
+                    textScaleFactor: 2,
+                  ),
+                  const Text(
+                    'Username',
+                    textScaleFactor: 1,
+                  ),
+                  Text(
+                    snapshot.data!.username,
+                    textScaleFactor: 2,
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return const CircularProgressIndicator();
+        },
+      ),
+    );
   }
 }

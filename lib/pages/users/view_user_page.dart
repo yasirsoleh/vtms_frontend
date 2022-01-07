@@ -1,8 +1,96 @@
-import 'package:flutter/material.dart';
-import 'package:vtms_frontend/pages/users/edit_profile_user_page.dart';
+import 'dart:convert';
 
-class ViewUserPage extends StatelessWidget {
-  const ViewUserPage({Key? key}) : super(key: key);
+import 'package:flutter/material.dart';
+import 'package:vtms_frontend/models/current_user.dart';
+import 'package:vtms_frontend/models/user.dart';
+import 'package:http/http.dart' as http;
+import 'package:vtms_frontend/pages/users/edit_user_page.dart';
+
+class ViewUserPage extends StatefulWidget {
+  final User user;
+  final CurrentUser currentUser;
+  const ViewUserPage({Key? key, required this.currentUser, required this.user})
+      : super(key: key);
+
+  @override
+  State<ViewUserPage> createState() => _ViewUserPageState();
+}
+
+class _ViewUserPageState extends State<ViewUserPage> {
+  late Future<User> futureUser;
+
+  @override
+  void initState() {
+    super.initState();
+    futureUser = fetchUser();
+  }
+
+  void showSnackBar(String snackBarMessage) {
+    SnackBar snackBar = SnackBar(
+      content: Text(snackBarMessage),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Future<User> fetchUser() async {
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "Bearer ${widget.currentUser.token}",
+    };
+    final response = await http.get(
+        Uri.parse('http://localhost/api/users/${widget.user.id}'),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
+  Future<void> deleteUser() async {
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "Bearer ${widget.currentUser.token}",
+    };
+    final response = await http.delete(
+        Uri.parse('http://localhost/api/users/${widget.user.id}'),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      showSnackBar('User deleted successfully');
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
+  Widget _deletePopUp(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Delete Confirmation'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const <Widget>[
+          Text("Are you sure you want to delete this user?"),
+        ],
+      ),
+      actions: <Widget>[
+        ElevatedButton(
+          onPressed: () {
+            deleteUser();
+            Navigator.of(context).pop();
+          },
+          child: const Text('Yes'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,45 +101,69 @@ class ViewUserPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () async {
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => const EditUserPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditUserPage(
+                    currentUser: widget.currentUser,
+                    user: widget.user,
+                  ),
+                ),
+              ).then((_) {
+                setState(() {
+                  futureUser = fetchUser();
+                });
+              });
             },
             icon: const Icon(Icons.edit),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => _deletePopUp(context),
+              ).then(
+                (_) => Navigator.pop(context),
+              );
+            },
             icon: const Icon(Icons.delete),
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              'Name',
-              textScaleFactor: 1,
-            ),
-            Text(
-              'Mohammad Alif Yasir',
-              textScaleFactor: 2,
-              //style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Usermame',
-              textScaleFactor: 1,
-            ),
-            Text(
-              'yasirsoleh',
-              textScaleFactor: 2,
-              //style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+      body: FutureBuilder<User>(
+        future: futureUser,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Name',
+                    textScaleFactor: 1,
+                  ),
+                  Text(
+                    snapshot.data!.name,
+                    textScaleFactor: 2,
+                  ),
+                  const Text(
+                    'Username',
+                    textScaleFactor: 1,
+                  ),
+                  Text(
+                    snapshot.data!.username,
+                    textScaleFactor: 2,
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return const CircularProgressIndicator();
+        },
       ),
     );
   }

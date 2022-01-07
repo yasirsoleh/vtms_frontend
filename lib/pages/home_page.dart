@@ -44,6 +44,23 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> logoutUser() async {
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "Bearer ${widget.currentUser.token}",
+    };
+    final response = await http
+        .get(Uri.parse('http://localhost/api/users/logout'), headers: headers);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> message = jsonDecode(response.body);
+      String snackBarMessage = message['message'];
+      showSnackBar(snackBarMessage);
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,11 +73,31 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    ListDetectionsPage(),
-    ListRoutesPage(),
-    ListCamerasPage(),
-  ];
+  // List<Widget> _widgetOptions = <Widget>[
+  //   ListDetectionsPage(currentUser: widget.currentUser),
+  //   const ListRoutesPage(),
+  //   const ListCamerasPage(),
+  // ];
+
+  void showSnackBar(String snackBarMessage) {
+    SnackBar snackBar = SnackBar(
+      content: Text(snackBarMessage),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Widget _widgetOptions(int option) {
+    switch (option) {
+      case 0:
+        return ListDetectionsPage();
+      case 1:
+        return ListRoutesPage();
+      case 2:
+        return ListCamerasPage();
+      default:
+        return ListDetectionsPage();
+    }
+  }
 
   static const List<Widget> _titleOptions = <Widget>[
     Text('Detections'),
@@ -192,17 +229,25 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const ChangePasswordUserPage()));
+                  builder: (context) => ChangePasswordUserPage(
+                        currentUser: widget.currentUser,
+                      )));
         },
       ),
       ListTile(
         leading: const Icon(Icons.logout),
         title: const Text('Logout'),
         onTap: () {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginUserPage()),
-              (route) => false);
+          logoutUser().then(
+            (_) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginUserPage(),
+                  ),
+                  (route) => false);
+            },
+          );
         },
       ),
     ];
@@ -231,7 +276,7 @@ class _HomePageState extends State<HomePage> {
         items: createBottomNavigationBarItem(),
       ),
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: _widgetOptions(_selectedIndex),
       ),
     );
   }
