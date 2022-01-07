@@ -68,7 +68,11 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
                     camera: widget.camera,
                   ),
                 ),
-              );
+              ).then((_) {
+                setState(() {
+                  futureCamera = fetchCamera();
+                });
+              });
             },
             icon: const Icon(Icons.edit),
           ),

@@ -22,7 +22,10 @@ class EditCameraPage extends StatefulWidget {
 
 class _EditCameraPageState extends State<EditCameraPage> {
   final _formEditCamera = GlobalKey<FormState>();
-  String _traffic_direction = 'inbound';
+  final _name = TextEditingController();
+  final _latitude = TextEditingController();
+  final _longitude = TextEditingController();
+  late String _traffic_direction;
 
   late Future<Camera> futureCamera;
 
@@ -59,12 +62,17 @@ class _EditCameraPageState extends State<EditCameraPage> {
     Map<String, String> headers = {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
+      "Content-Type": "application/x-www-form-urlencoded",
     };
 
     Map<String, String> body = {
-      "name": _formEditCamera.currentState?.value['name'],
-      "username": username.text,
+      "name": _name.text,
+      "traffic_direction": _traffic_direction,
+      "latitude": _latitude.text,
+      "longitude": _longitude.text,
     };
+
+    print('_traffic_direction at body: ${body['traffic_direction']}');
 
     final response = await http.put(
         Uri.parse('http://localhost/api/cameras/${widget.camera.id}'),
@@ -73,14 +81,16 @@ class _EditCameraPageState extends State<EditCameraPage> {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> message = jsonDecode(response.body);
+      print(message);
       String snackBarMessage = message['message'];
       showSnackBar(snackBarMessage);
     } else if (response.statusCode != 200) {
       Map<String, dynamic> message = jsonDecode(response.body);
+      print(message);
       String snackBarMessage = message['message'];
       showSnackBar(snackBarMessage);
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load camera');
     }
   }
 
@@ -92,7 +102,14 @@ class _EditCameraPageState extends State<EditCameraPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_formEditCamera.currentState!.validate()) {
+                _formEditCamera.currentState!.save();
+                updateCamera().then((_) {
+                  Navigator.pop(context);
+                });
+              }
+            },
             icon: const Icon(Icons.save),
           ),
         ],
@@ -101,6 +118,10 @@ class _EditCameraPageState extends State<EditCameraPage> {
         future: futureCamera,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            _name.text = snapshot.data!.name;
+            _traffic_direction = snapshot.data!.traffic_direction;
+            _latitude.text = snapshot.data!.latitude;
+            _longitude.text = snapshot.data!.longitude;
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Form(
@@ -113,10 +134,10 @@ class _EditCameraPageState extends State<EditCameraPage> {
                       decoration: const InputDecoration(
                         labelText: 'Camera Name',
                       ),
-                      initialValue: snapshot.data!.name,
-                      validator: (String? username) {
-                        if (username == null || username.isEmpty) {
-                          return 'Please enter your username';
+                      controller: _name,
+                      validator: (String? name) {
+                        if (name == null || name.isEmpty) {
+                          return 'Please enter camera name';
                         }
                         return null;
                       },
@@ -127,19 +148,34 @@ class _EditCameraPageState extends State<EditCameraPage> {
                         labelText: 'Traffic Direction',
                       ),
                       icon: const Icon(Icons.arrow_downward),
-                      items: const [
+                      items: [
                         DropdownMenuItem(
-                          child: Text('inbound'),
+                          child: const Text('inbound'),
                           value: 'inbound',
+                          onTap: () {
+                            setState(() {
+                              _traffic_direction = 'inbound';
+                            });
+                          },
                         ),
                         DropdownMenuItem(
-                          child: Text('outbound'),
+                          child: const Text('outbound'),
                           value: 'outbound',
+                          onTap: () {
+                            setState(() {
+                              _traffic_direction = 'outbound';
+                            });
+                          },
                         )
                       ],
-                      onChanged: (String? newValue) async {
+                      onChanged: (String? traffic_direction) {
                         setState(() {
-                          _traffic_direction = newValue!;
+                          _traffic_direction = traffic_direction!;
+                        });
+                      },
+                      onSaved: (String? traffic_direction) {
+                        setState(() {
+                          _traffic_direction = traffic_direction!;
                         });
                       },
                     ),
@@ -147,10 +183,10 @@ class _EditCameraPageState extends State<EditCameraPage> {
                       decoration: const InputDecoration(
                         labelText: 'Latitude',
                       ),
-                      initialValue: snapshot.data!.latitude,
-                      validator: (String? username) {
-                        if (username == null || username.isEmpty) {
-                          return 'Please enter your username';
+                      controller: _latitude,
+                      validator: (String? latitude) {
+                        if (latitude == null || latitude.isEmpty) {
+                          return 'Please enter camera latitude';
                         }
                         return null;
                       },
@@ -159,10 +195,10 @@ class _EditCameraPageState extends State<EditCameraPage> {
                       decoration: const InputDecoration(
                         labelText: 'Longitude',
                       ),
-                      initialValue: snapshot.data!.longitude,
-                      validator: (String? username) {
-                        if (username == null || username.isEmpty) {
-                          return 'Please enter your username';
+                      controller: _longitude,
+                      validator: (String? longitude) {
+                        if (longitude == null || longitude.isEmpty) {
+                          return 'Please enter camera longitude';
                         }
                         return null;
                       },

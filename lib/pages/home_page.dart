@@ -240,16 +240,13 @@ class _HomePageState extends State<HomePage> {
         leading: const Icon(Icons.logout),
         title: const Text('Logout'),
         onTap: () {
-          logoutUser().then(
-            (_) {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginUserPage(),
-                  ),
-                  (route) => false);
-            },
-          );
+          logoutUser();
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginUserPage(),
+              ),
+              (route) => false);
         },
       ),
     ];
