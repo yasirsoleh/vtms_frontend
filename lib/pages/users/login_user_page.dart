@@ -38,15 +38,17 @@ class _LoginUserPageState extends State<LoginUserPage> {
       };
       try {
         final response = await http.post(
-            Uri.parse('http://localhost/api/users/login'),
+            Uri.parse('http://10.0.2.2/api/users/login'),
             headers: headers,
             body: body);
         if (response.statusCode == 200) {
           currentUser = CurrentUser.fromJson(jsonDecode(response.body));
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HomePage(currentUser: currentUser)));
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(currentUser: currentUser),
+            ),
+          );
         } else if (response.statusCode == 403) {
           Map<String, dynamic> message = jsonDecode(response.body);
           String snackBarMessage = message['message'];

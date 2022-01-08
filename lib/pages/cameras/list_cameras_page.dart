@@ -21,7 +21,7 @@ class ListCamerasPage extends StatefulWidget {
 
 class _ListCamerasPageState extends State<ListCamerasPage> {
   final PagingController<Uri, Camera> _pagingController =
-      PagingController(firstPageKey: Uri.parse('http://localhost/api/cameras'));
+      PagingController(firstPageKey: Uri.parse('http://10.0.2.2/api/cameras'));
 
   Future<PaginatedCameras> fetchNextPaginatedUsers(Uri next) async {
     Map<String, String> headers = {

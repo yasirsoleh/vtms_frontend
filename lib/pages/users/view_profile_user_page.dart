@@ -39,7 +39,7 @@ class _ViewProfileUserPageState extends State<ViewProfileUserPage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http.get(Uri.parse('http://localhost/api/users/'),
+    final response = await http.get(Uri.parse('http://10.0.2.2/api/users/'),
         headers: headers);
 
     if (response.statusCode == 200) {

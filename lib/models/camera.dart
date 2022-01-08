@@ -27,7 +27,9 @@ class Camera extends Equatable {
   factory Camera.fromJson(Map<String, dynamic> json) => Camera(
         id: json["id"].toString(),
         name: json["name"] as String,
-        plain_text_token: json["plain_text_token"] as String,
+        plain_text_token: (json["plain_text_token"] != null)
+            ? json["plain_text_token"] as String
+            : null,
         traffic_direction: json["traffic_direction"] as String,
         latitude: json["latitude"] as String,
         longitude: json["longitude"] as String,

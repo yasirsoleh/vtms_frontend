@@ -38,7 +38,7 @@ class _ViewUserPageState extends State<ViewUserPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse('http://localhost/api/users/${widget.user.id}'),
+        Uri.parse('http://10.0.2.2/api/users/${widget.user.id}'),
         headers: headers);
 
     if (response.statusCode == 200) {
@@ -54,11 +54,13 @@ class _ViewUserPageState extends State<ViewUserPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.delete(
-        Uri.parse('http://localhost/api/users/${widget.user.id}'),
+        Uri.parse('http://10.0.2.2/api/users/${widget.user.id}'),
         headers: headers);
 
     if (response.statusCode == 200) {
-      showSnackBar('User deleted successfully');
+      Map<String, dynamic> message = jsonDecode(response.body);
+      String snackBarMessage = message['message'];
+      showSnackBar(snackBarMessage);
     } else {
       throw Exception('Failed to load user');
     }

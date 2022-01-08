@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http.get(Uri.parse('http://localhost/api/users/'),
+    final response = await http.get(Uri.parse('http://10.0.2.2/api/users/'),
         headers: headers);
 
     if (response.statusCode == 200) {
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http
-        .get(Uri.parse('http://localhost/api/users/logout'), headers: headers);
+        .get(Uri.parse('http://10.0.2.2/api/users/logout'), headers: headers);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> message = jsonDecode(response.body);
@@ -73,12 +73,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // List<Widget> _widgetOptions = <Widget>[
-  //   ListDetectionsPage(currentUser: widget.currentUser),
-  //   const ListRoutesPage(),
-  //   const ListCamerasPage(),
-  // ];
-
   void showSnackBar(String snackBarMessage) {
     SnackBar snackBar = SnackBar(
       content: Text(snackBarMessage),
@@ -89,15 +83,21 @@ class _HomePageState extends State<HomePage> {
   Widget _widgetOptions(int option) {
     switch (option) {
       case 0:
-        return ListDetectionsPage();
+        return ListDetectionsPage(
+          currentUser: widget.currentUser,
+        );
       case 1:
-        return ListRoutesPage();
+        return ListRoutesPage(
+          currentUser: widget.currentUser,
+        );
       case 2:
         return ListCamerasPage(
           currentUser: widget.currentUser,
         );
       default:
-        return ListDetectionsPage();
+        return ListDetectionsPage(
+          currentUser: widget.currentUser,
+        );
     }
   }
 
@@ -128,9 +128,13 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: () async {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddCameraPage()));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddCameraPage(
+                    currentUser: widget.currentUser,
+                  ),
+                ),
+              ).then((value) {});
             },
             icon: const Icon(Icons.add),
           ),
@@ -201,11 +205,12 @@ class _HomePageState extends State<HomePage> {
         ),
         onTap: () {
           Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ViewProfileUserPage(currentUser: widget.currentUser)))
-              .then((_) {
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ViewProfileUserPage(currentUser: widget.currentUser),
+            ),
+          ).then((_) {
             setState(() {
               futureUser = fetchUser();
             });
@@ -217,11 +222,13 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Users'),
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ListUsersPage(
-                        currentUser: widget.currentUser,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListUsersPage(
+                currentUser: widget.currentUser,
+              ),
+            ),
+          );
         },
       ),
       ListTile(
@@ -229,11 +236,13 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Change Password'),
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChangePasswordUserPage(
-                        currentUser: widget.currentUser,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChangePasswordUserPage(
+                currentUser: widget.currentUser,
+              ),
+            ),
+          );
         },
       ),
       ListTile(

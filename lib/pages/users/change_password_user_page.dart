@@ -48,7 +48,7 @@ class _ChangePasswordUserPageState extends State<ChangePasswordUserPage> {
     };
 
     final response = await http.post(
-        Uri.parse('http://localhost/api/users/change_password'),
+        Uri.parse('http://10.0.2.2/api/users/change_password'),
         headers: headers,
         body: body);
 

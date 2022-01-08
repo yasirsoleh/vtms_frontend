@@ -40,7 +40,7 @@ class _EditProfileUserPageState extends State<EditProfileUserPage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http.get(Uri.parse('http://localhost/api/users/'),
+    final response = await http.get(Uri.parse('http://10.0.2.2/api/users/'),
         headers: headers);
 
     if (response.statusCode == 200) {
@@ -61,7 +61,7 @@ class _EditProfileUserPageState extends State<EditProfileUserPage> {
       "username": username.text,
     };
 
-    final response = await http.put(Uri.parse('http://localhost/api/users/'),
+    final response = await http.put(Uri.parse('http://10.0.2.2/api/users/'),
         headers: headers, body: body);
 
     if (response.statusCode == 200) {
@@ -93,52 +93,53 @@ class _EditProfileUserPageState extends State<EditProfileUserPage> {
         ],
       ),
       body: FutureBuilder<User>(
-          future: futureUser,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              name.text = snapshot.data!.name;
-              username.text = snapshot.data!.username;
-              return Form(
-                key: _formEditProfile,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Name',
-                        ),
-                        controller: name,
-                        validator: (String? name) {
-                          if (name == null || name.isEmpty) {
-                            return 'Please enter your username';
-                          }
-                          return null;
-                        },
+        future: futureUser,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            name.text = snapshot.data!.name;
+            username.text = snapshot.data!.username;
+            return Form(
+              key: _formEditProfile,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
                       ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Username',
-                        ),
-                        controller: username,
-                        validator: (String? username) {
-                          if (username == null || username.isEmpty) {
-                            return 'Please enter your username';
-                          }
-                          return null;
-                        },
+                      controller: name,
+                      validator: (String? name) {
+                        if (name == null || name.isEmpty) {
+                          return 'Please enter your username';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
                       ),
-                    ],
-                  ),
+                      controller: username,
+                      validator: (String? username) {
+                        if (username == null || username.isEmpty) {
+                          return 'Please enter your username';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                 ),
-              );
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
-            return const CircularProgressIndicator();
-          }),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return const CircularProgressIndicator();
+        },
+      ),
     );
   }
 }

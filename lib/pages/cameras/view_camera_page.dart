@@ -41,7 +41,7 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse('http://localhost/api/cameras/${widget.camera.id}'),
+        Uri.parse('http://10.0.2.2/api/cameras/${widget.camera.id}'),
         headers: headers);
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonDecoded = jsonDecode(response.body);
@@ -49,6 +49,52 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
     } else {
       throw Exception('Failed to load camera');
     }
+  }
+
+  Future<void> deleteCamera() async {
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "Bearer ${widget.currentUser.token}",
+    };
+    final response = await http.delete(
+        Uri.parse('http://10.0.2.2/api/cameras/${widget.camera.id}'),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> message = jsonDecode(response.body);
+      String snackBarMessage = message['message'];
+      showSnackBar(snackBarMessage);
+    } else {
+      throw Exception('Failed to load camera');
+    }
+  }
+
+  Widget _deletePopUp(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Delete Confirmation'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const <Widget>[
+          Text("Are you sure you want to delete this camera?"),
+        ],
+      ),
+      actions: <Widget>[
+        ElevatedButton(
+          onPressed: () async {
+            deleteCamera();
+            Navigator.of(context).pop();
+          },
+          child: const Text('Yes'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
   }
 
   @override
@@ -77,7 +123,14 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
             icon: const Icon(Icons.edit),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => _deletePopUp(context),
+              ).then(
+                (_) => Navigator.pop(context),
+              );
+            },
             icon: const Icon(Icons.delete),
           )
         ],

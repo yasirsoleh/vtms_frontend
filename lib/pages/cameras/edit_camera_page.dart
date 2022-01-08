@@ -48,7 +48,7 @@ class _EditCameraPageState extends State<EditCameraPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse('http://localhost/api/cameras/${widget.camera.id}'),
+        Uri.parse('http://10.0.2.2/api/cameras/${widget.camera.id}'),
         headers: headers);
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonDecoded = jsonDecode(response.body);
@@ -72,21 +72,17 @@ class _EditCameraPageState extends State<EditCameraPage> {
       "longitude": _longitude.text,
     };
 
-    print('_traffic_direction at body: ${body['traffic_direction']}');
-
     final response = await http.put(
-        Uri.parse('http://localhost/api/cameras/${widget.camera.id}'),
+        Uri.parse('http://10.0.2.2/api/cameras/${widget.camera.id}'),
         headers: headers,
         body: body);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> message = jsonDecode(response.body);
-      print(message);
       String snackBarMessage = message['message'];
       showSnackBar(snackBarMessage);
     } else if (response.statusCode != 200) {
       Map<String, dynamic> message = jsonDecode(response.body);
-      print(message);
       String snackBarMessage = message['message'];
       showSnackBar(snackBarMessage);
     } else {
@@ -102,7 +98,7 @@ class _EditCameraPageState extends State<EditCameraPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formEditCamera.currentState!.validate()) {
                 _formEditCamera.currentState!.save();
                 updateCamera().then((_) {
