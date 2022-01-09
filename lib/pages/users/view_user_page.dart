@@ -61,6 +61,10 @@ class _ViewUserPageState extends State<ViewUserPage> {
       Map<String, dynamic> message = jsonDecode(response.body);
       String snackBarMessage = message['message'];
       showSnackBar(snackBarMessage);
+    } else if (response.statusCode != 200) {
+      Map<String, dynamic> message = jsonDecode(response.body);
+      String snackBarMessage = message['message'];
+      showSnackBar(snackBarMessage);
     } else {
       throw Exception('Failed to load user');
     }

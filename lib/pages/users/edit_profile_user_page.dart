@@ -79,7 +79,7 @@ class _EditProfileUserPageState extends State<EditProfileUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit User'),
+        title: const Text('Edit Profile'),
         centerTitle: true,
         actions: [
           IconButton(

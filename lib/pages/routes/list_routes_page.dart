@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:pusher_client/pusher_client.dart';
 import 'package:vtms_frontend/models/current_user.dart';
 import 'package:vtms_frontend/models/detection.dart';
 import 'package:vtms_frontend/models/paginated_detections.dart';
