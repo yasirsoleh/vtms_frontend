@@ -34,6 +34,7 @@ class _ListRoutesPageState extends State<ListRoutesPage> {
       print(json.decode(response.body));
       return PaginatedDetections.fromJson(jsonDecode(response.body));
     } else {
+      print(json.decode(response.body));
       throw Exception('Failed to load cameras');
     }
   }
