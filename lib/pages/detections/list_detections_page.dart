@@ -23,6 +23,7 @@ class ListDetectionsPage extends StatefulWidget {
 class _ListDetectionsPageState extends State<ListDetectionsPage> {
   PusherClient pusher =
       PusherClient('6bd86204cf9ccf93e324', PusherOptions(cluster: 'ap1'));
+
   final PagingController<Uri, Detection> _pagingController = PagingController(
       firstPageKey: Uri.parse('http://10.0.2.2/api/detections'));
 

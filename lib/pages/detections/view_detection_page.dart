@@ -40,7 +40,7 @@ class _ViewDetectionPageState extends State<ViewDetectionPage> {
       Map<String, dynamic> jsonDecoded = jsonDecode(response.body);
       return DetectionWithCamera.fromJson(jsonDecoded['detection']);
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load detections');
     }
   }
 
