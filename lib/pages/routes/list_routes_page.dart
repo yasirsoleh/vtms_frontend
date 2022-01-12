@@ -6,7 +6,7 @@ import 'package:vtms_frontend/models/detection.dart';
 import 'package:vtms_frontend/models/paginated_detections.dart';
 import 'package:http/http.dart' as http;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:vtms_frontend/pages/detections/view_detection_page.dart';
+import 'package:vtms_frontend/pages/routes/view_routes_page.dart';
 
 class ListRoutesPage extends StatefulWidget {
   final CurrentUser currentUser;
@@ -21,7 +21,8 @@ class ListRoutesPage extends StatefulWidget {
 
 class _ListRoutesPageState extends State<ListRoutesPage> {
   final PagingController<Uri, Detection> _pagingController = PagingController(
-      firstPageKey: Uri.parse('http://10.0.2.2/api/detections/plate_numbers'));
+      firstPageKey:
+          Uri.parse('http://10.0.2.2/api/detections/plate_numbers/list'));
 
   Future<PaginatedDetections> fetchNextPaginatedUsers(Uri next) async {
     Map<String, String> headers = {
@@ -81,9 +82,9 @@ class _ListRoutesPageState extends State<ListRoutesPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ViewDetectionPage(
+                builder: (context) => ViewRoutePage(
                   currentUser: widget.currentUser,
-                  detection: item,
+                  plate_number: item.plate_number,
                 ),
               ),
             ).then((_) {
