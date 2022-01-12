@@ -88,6 +88,7 @@ class _ListDetectionsPageState extends State<ListDetectionsPage> {
     super.dispose();
     pusher.unsubscribe("detections");
     pusher.disconnect();
+    _pagingController.dispose();
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:vtms_frontend/models/camera.dart';
@@ -58,6 +59,12 @@ class _ListCamerasPageState extends State<ListCamerasPage> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pagingController.dispose();
   }
 
   @override
