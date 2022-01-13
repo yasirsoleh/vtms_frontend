@@ -32,10 +32,8 @@ class _ListRoutesPageState extends State<ListRoutesPage> {
     final response = await http.get(next, headers: headers);
 
     if (response.statusCode == 200) {
-      print(json.decode(response.body));
       return PaginatedDetections.fromJson(jsonDecode(response.body));
     } else {
-      print(json.decode(response.body));
       throw Exception('Failed to load cameras');
     }
   }

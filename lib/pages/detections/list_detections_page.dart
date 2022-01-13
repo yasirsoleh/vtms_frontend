@@ -70,7 +70,6 @@ class _ListDetectionsPageState extends State<ListDetectionsPage> {
     Channel channel = pusher.subscribe('detections');
     channel.bind("new-detection", (event) {
       _pagingController.refresh();
-      print(event!.data);
     });
   }
 
