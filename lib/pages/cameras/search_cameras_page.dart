@@ -6,18 +6,18 @@ import 'package:vtms_frontend/models/current_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:vtms_frontend/pages/cameras/view_camera_page.dart';
 
-class SearchCameraPage extends StatefulWidget {
+class SearchCamerasPage extends StatefulWidget {
   final CurrentUser currentUser;
-  const SearchCameraPage({
+  const SearchCamerasPage({
     Key? key,
     required this.currentUser,
   }) : super(key: key);
 
   @override
-  _SearchCameraPageState createState() => _SearchCameraPageState();
+  _SearchCamerasPageState createState() => _SearchCamerasPageState();
 }
 
-class _SearchCameraPageState extends State<SearchCameraPage> {
+class _SearchCamerasPageState extends State<SearchCamerasPage> {
   final name = TextEditingController();
   late Future<List<Camera>> futureListCamera;
 
@@ -26,7 +26,7 @@ class _SearchCameraPageState extends State<SearchCameraPage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response;
+    final http.Response response;
     if (name.text == '') {
       response = await http.get(
           Uri.parse("http://192.168.0.139/api/cameras/search"),

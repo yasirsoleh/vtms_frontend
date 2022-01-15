@@ -6,9 +6,11 @@ import 'package:vtms_frontend/models/current_user.dart';
 import 'package:vtms_frontend/models/user.dart';
 import 'package:vtms_frontend/pages/cameras/add_camera_page.dart';
 import 'package:vtms_frontend/pages/cameras/list_cameras_page.dart';
-import 'package:vtms_frontend/pages/cameras/search_camera_page.dart';
+import 'package:vtms_frontend/pages/cameras/search_cameras_page.dart';
 import 'package:vtms_frontend/pages/detections/list_detections_page.dart';
+import 'package:vtms_frontend/pages/detections/search_detections_page.dart';
 import 'package:vtms_frontend/pages/routes/list_routes_page.dart';
+import 'package:vtms_frontend/pages/routes/search_routes_page.dart';
 import 'package:vtms_frontend/pages/users/change_password_user_page.dart';
 import 'package:vtms_frontend/pages/users/list_users_page.dart';
 import 'package:vtms_frontend/pages/users/login_user_page.dart';
@@ -114,14 +116,32 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchDetectionPage(
+                    currentUser: widget.currentUser,
+                  ),
+                ),
+              );
+            },
             icon: const Icon(Icons.search),
           ),
         ];
       case 1:
         return <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchRoutesPage(
+                    currentUser: widget.currentUser,
+                  ),
+                ),
+              ).then((value) {});
+            },
             icon: const Icon(Icons.search),
           ),
         ];
@@ -129,7 +149,16 @@ class _HomePageState extends State<HomePage> {
         if (widget.currentUser.user.is_admin != "true") {
           return <Widget>[
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchCamerasPage(
+                      currentUser: widget.currentUser,
+                    ),
+                  ),
+                ).then((value) {});
+              },
               icon: const Icon(Icons.search),
             ),
           ];
@@ -153,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SearchCameraPage(
+                    builder: (context) => SearchCamerasPage(
                       currentUser: widget.currentUser,
                     ),
                   ),
