@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:vtms_frontend/models/camera.dart';
 import 'package:vtms_frontend/models/current_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:vtms_frontend/models/detection.dart';
@@ -127,8 +126,6 @@ class _SearchDetectionPageState extends State<SearchDetectionPage> {
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }
-
-          // By default, show a loading spinner.
           return const Center(
             child: CircularProgressIndicator(),
           );

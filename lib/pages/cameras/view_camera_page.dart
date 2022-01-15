@@ -102,90 +102,96 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
 
   Widget _columnIsAdmin(AsyncSnapshot snapshot) {
     if (widget.currentUser.user.is_admin == "true") {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Camera Name',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.name,
-            textScaleFactor: 2,
-          ),
-          const Text(
-            'Token',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.plain_text_token!,
-            textScaleFactor: 2,
-          ),
-          const Text(
-            'Traffic Direction',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.traffic_direction,
-            textScaleFactor: 2,
-          ),
-          const Text(
-            'Latitude',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.latitude,
-            textScaleFactor: 2,
-          ),
-          const Text(
-            'Longitude',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.longitude,
-            textScaleFactor: 2,
-          ),
-        ],
+      return SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Camera Name',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.name,
+              textScaleFactor: 2,
+            ),
+            const Text(
+              'Token',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.plain_text_token!,
+              textScaleFactor: 2,
+            ),
+            const Text(
+              'Traffic Direction',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.traffic_direction,
+              textScaleFactor: 2,
+            ),
+            const Text(
+              'Latitude',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.latitude,
+              textScaleFactor: 2,
+            ),
+            const Text(
+              'Longitude',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.longitude,
+              textScaleFactor: 2,
+            ),
+          ],
+        ),
       );
     } else {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Camera Name',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.name,
-            textScaleFactor: 2,
-          ),
-          const Text(
-            'Traffic Direction',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.traffic_direction,
-            textScaleFactor: 2,
-          ),
-          const Text(
-            'Latitude',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.latitude,
-            textScaleFactor: 2,
-          ),
-          const Text(
-            'Longitude',
-            textScaleFactor: 1,
-          ),
-          Text(
-            snapshot.data!.longitude,
-            textScaleFactor: 2,
-          ),
-        ],
+      return SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Camera Name',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.name,
+              textScaleFactor: 2,
+            ),
+            const Text(
+              'Traffic Direction',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.traffic_direction,
+              textScaleFactor: 2,
+            ),
+            const Text(
+              'Latitude',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.latitude,
+              textScaleFactor: 2,
+            ),
+            const Text(
+              'Longitude',
+              textScaleFactor: 1,
+            ),
+            Text(
+              snapshot.data!.longitude,
+              textScaleFactor: 2,
+            ),
+          ],
+        ),
       );
     }
   }
