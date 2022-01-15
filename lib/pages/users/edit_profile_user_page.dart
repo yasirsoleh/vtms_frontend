@@ -40,8 +40,8 @@ class _EditProfileUserPageState extends State<EditProfileUserPage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http.get(Uri.parse('http://10.0.2.2/api/users/'),
-        headers: headers);
+    final response = await http
+        .get(Uri.parse('http://192.168.0.139/api/users/'), headers: headers);
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
@@ -61,8 +61,10 @@ class _EditProfileUserPageState extends State<EditProfileUserPage> {
       "username": username.text,
     };
 
-    final response = await http.put(Uri.parse('http://10.0.2.2/api/users/'),
-        headers: headers, body: body);
+    final response = await http.put(
+        Uri.parse('http://192.168.0.139/api/users/'),
+        headers: headers,
+        body: body);
 
     if (response.statusCode == 200) {
       Navigator.pop(context, true);

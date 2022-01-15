@@ -1,10 +1,13 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:vtms_frontend/models/current_user.dart';
 import 'package:http/http.dart' as http;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AddCameraPage extends StatefulWidget {
   final CurrentUser currentUser;
@@ -20,6 +23,7 @@ class _AddCameraPageState extends State<AddCameraPage> {
   final longitude = TextEditingController();
   String traffic_direction = 'inbound';
   final _formAddCamera = GlobalKey<FormState>();
+  final Completer<GoogleMapController> _controller = Completer();
 
   @override
   void dispose() {
@@ -27,6 +31,12 @@ class _AddCameraPageState extends State<AddCameraPage> {
     latitude.dispose();
     longitude.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getInitialPosition();
   }
 
   void showSnackBar(String snackBarMessage) {
@@ -50,8 +60,10 @@ class _AddCameraPageState extends State<AddCameraPage> {
       "traffic_direction": traffic_direction,
     };
 
-    final response = await http.post(Uri.parse('http://10.0.2.2/api/cameras'),
-        headers: headers, body: body);
+    final response = await http.post(
+        Uri.parse('http://192.168.0.139/api/cameras'),
+        headers: headers,
+        body: body);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> message = jsonDecode(response.body);
@@ -63,6 +75,17 @@ class _AddCameraPageState extends State<AddCameraPage> {
       showSnackBar(errorMessage['message']);
     } else {
       throw Exception('Failed to add user');
+    }
+  }
+
+  Future<LatLng> _getInitialPosition() async {
+    try {
+      await Geolocator.requestPermission();
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      return LatLng(position.latitude, position.longitude);
+    } on Exception catch (e) {
+      throw Exception('$e');
     }
   }
 
@@ -82,75 +105,113 @@ class _AddCameraPageState extends State<AddCameraPage> {
               icon: const Icon(Icons.save),
             ),
           ]),
-      body: Form(
-        key: _formAddCamera,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Camera Name',
-                ),
-                controller: name,
-                validator: (String? name) {
-                  if (name == null || name.isEmpty) {
-                    return 'Please enter camera name';
-                  }
-                  return null;
-                },
-              ),
-              DropdownButtonFormField(
-                value: traffic_direction,
-                decoration: const InputDecoration(
-                  labelText: 'Traffic Direction',
-                ),
-                icon: const Icon(Icons.arrow_downward),
-                items: const [
-                  DropdownMenuItem(
-                    child: Text('inbound'),
-                    value: 'inbound',
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Form(
+            key: _formAddCamera,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Camera Name',
+                    ),
+                    controller: name,
+                    validator: (String? name) {
+                      if (name == null || name.isEmpty) {
+                        return 'Please enter camera name';
+                      }
+                      return null;
+                    },
                   ),
-                  DropdownMenuItem(
-                    child: Text('outbound'),
-                    value: 'outbound',
-                  )
+                  DropdownButtonFormField(
+                    value: traffic_direction,
+                    decoration: const InputDecoration(
+                      labelText: 'Traffic Direction',
+                    ),
+                    icon: const Icon(Icons.arrow_downward),
+                    items: const [
+                      DropdownMenuItem(
+                        child: Text('inbound'),
+                        value: 'inbound',
+                      ),
+                      DropdownMenuItem(
+                        child: Text('outbound'),
+                        value: 'outbound',
+                      )
+                    ],
+                    onChanged: (String? newValue) async {
+                      setState(() {
+                        traffic_direction = newValue!;
+                      });
+                    },
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Latitude',
+                    ),
+                    controller: latitude,
+                    validator: (String? latitude) {
+                      if (latitude == null || latitude.isEmpty) {
+                        return 'Please enter camera latitude';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Longitude',
+                    ),
+                    controller: longitude,
+                    validator: (String? longitude) {
+                      if (longitude == null || longitude.isEmpty) {
+                        return 'Please enter camera longitude';
+                      }
+                      return null;
+                    },
+                  ),
                 ],
-                onChanged: (String? newValue) async {
-                  setState(() {
-                    traffic_direction = newValue!;
-                  });
-                },
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Latitude',
-                ),
-                controller: latitude,
-                validator: (String? latitude) {
-                  if (latitude == null || latitude.isEmpty) {
-                    return 'Please enter camera latitude';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Longitude',
-                ),
-                controller: longitude,
-                validator: (String? longitude) {
-                  if (longitude == null || longitude.isEmpty) {
-                    return 'Please enter camera longitude';
-                  }
-                  return null;
-                },
-              ),
-            ],
+            ),
           ),
-        ),
+          FutureBuilder<LatLng>(
+            future: _getInitialPosition(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                print(snapshot.data.toString());
+                return SizedBox(
+                  height: 300,
+                  child: GoogleMap(
+                    mapType: MapType.hybrid,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(
+                          snapshot.data!.latitude, snapshot.data!.longitude),
+                      zoom: 15,
+                    ),
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                    markers: {
+                      Marker(
+                        markerId: const MarkerId('current_position'),
+                        position: LatLng(
+                            snapshot.data!.latitude, snapshot.data!.longitude),
+                      ),
+                    },
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
+          ),
+        ],
       ),
     );
   }

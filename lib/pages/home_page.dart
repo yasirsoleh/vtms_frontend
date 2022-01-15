@@ -34,8 +34,8 @@ class _HomePageState extends State<HomePage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http.get(Uri.parse('http://10.0.2.2/api/users/'),
-        headers: headers);
+    final response = await http
+        .get(Uri.parse('http://192.168.0.139/api/users/'), headers: headers);
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
@@ -49,8 +49,9 @@ class _HomePageState extends State<HomePage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http
-        .get(Uri.parse('http://10.0.2.2/api/users/logout'), headers: headers);
+    final response = await http.get(
+        Uri.parse('http://192.168.0.139/api/users/logout'),
+        headers: headers);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> message = jsonDecode(response.body);
@@ -124,25 +125,34 @@ class _HomePageState extends State<HomePage> {
           ),
         ];
       case 2:
-        return <Widget>[
-          IconButton(
-            onPressed: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddCameraPage(
-                    currentUser: widget.currentUser,
+        if (widget.currentUser.user.is_admin != "true") {
+          return <Widget>[
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.search),
+            ),
+          ];
+        } else {
+          return <Widget>[
+            IconButton(
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddCameraPage(
+                      currentUser: widget.currentUser,
+                    ),
                   ),
-                ),
-              ).then((value) {});
-            },
-            icon: const Icon(Icons.add),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-          ),
-        ];
+                ).then((value) {});
+              },
+              icon: const Icon(Icons.add),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.search),
+            ),
+          ];
+        }
       default:
         return <Widget>[];
     }
@@ -169,96 +179,175 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _createDrawerItems() {
-    return [
-      DrawerHeader(
-        decoration: const BoxDecoration(
-          color: Colors.red,
+    if (widget.currentUser.user.is_admin != "true") {
+      return [
+        DrawerHeader(
+          decoration: const BoxDecoration(
+            color: Colors.red,
+          ),
+          child: Row(
+            children: const [
+              Center(
+                child: Image(
+                  image: AssetImage('assets/images/car.png'),
+                  height: 60,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  'Vehicle Tracking Management System',
+                  style: TextStyle(color: Colors.white),
+                  textScaleFactor: 1.5,
+                ),
+              ),
+            ],
+          ),
         ),
-        child: Row(
-          children: const [
-            Center(
-              child: Image(
-                image: AssetImage('assets/images/car.png'),
-                height: 60,
-              ),
-            ),
-            Expanded(
-              child: Text(
-                'Vehicle Tracking Management System',
-                style: TextStyle(color: Colors.white),
-                textScaleFactor: 1.5,
-              ),
-            ),
-          ],
-        ),
-      ),
-      ListTile(
-        leading: const Icon(Icons.person),
-        title: FutureBuilder<User>(
-          future: futureUser,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Text(snapshot.data!.name);
-            }
-            return Text(widget.currentUser.user.name);
-          },
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  ViewProfileUserPage(currentUser: widget.currentUser),
-            ),
-          ).then((_) {
-            setState(() {
-              futureUser = fetchUser();
-            });
-          });
-        },
-      ),
-      ListTile(
-        leading: const Icon(Icons.group),
-        title: const Text('Users'),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ListUsersPage(
-                currentUser: widget.currentUser,
-              ),
-            ),
-          );
-        },
-      ),
-      ListTile(
-        leading: const Icon(Icons.password),
-        title: const Text('Change Password'),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChangePasswordUserPage(
-                currentUser: widget.currentUser,
-              ),
-            ),
-          );
-        },
-      ),
-      ListTile(
-        leading: const Icon(Icons.logout),
-        title: const Text('Logout'),
-        onTap: () {
-          logoutUser();
-          Navigator.pushAndRemoveUntil(
+        ListTile(
+          leading: const Icon(Icons.person),
+          title: FutureBuilder<User>(
+            future: futureUser,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data!.name);
+              }
+              return Text(widget.currentUser.user.name);
+            },
+          ),
+          onTap: () {
+            Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const LoginUserPage(),
+                builder: (context) =>
+                    ViewProfileUserPage(currentUser: widget.currentUser),
               ),
-              (route) => false);
-        },
-      ),
-    ];
+            ).then((_) {
+              setState(() {
+                futureUser = fetchUser();
+              });
+            });
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.password),
+          title: const Text('Change Password'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChangePasswordUserPage(
+                  currentUser: widget.currentUser,
+                ),
+              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.logout),
+          title: const Text('Logout'),
+          onTap: () {
+            logoutUser();
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginUserPage(),
+                ),
+                (route) => false);
+          },
+        ),
+      ];
+    } else {
+      return [
+        DrawerHeader(
+          decoration: const BoxDecoration(
+            color: Colors.red,
+          ),
+          child: Row(
+            children: const [
+              Center(
+                child: Image(
+                  image: AssetImage('assets/images/car.png'),
+                  height: 60,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  'Vehicle Tracking Management System',
+                  style: TextStyle(color: Colors.white),
+                  textScaleFactor: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.person),
+          title: FutureBuilder<User>(
+            future: futureUser,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data!.name);
+              }
+              return Text(widget.currentUser.user.name);
+            },
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    ViewProfileUserPage(currentUser: widget.currentUser),
+              ),
+            ).then((_) {
+              setState(() {
+                futureUser = fetchUser();
+              });
+            });
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.group),
+          title: const Text('Users'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ListUsersPage(
+                  currentUser: widget.currentUser,
+                ),
+              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.password),
+          title: const Text('Change Password'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChangePasswordUserPage(
+                  currentUser: widget.currentUser,
+                ),
+              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.logout),
+          title: const Text('Logout'),
+          onTap: () {
+            logoutUser();
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginUserPage(),
+                ),
+                (route) => false);
+          },
+        ),
+      ];
+    }
   }
 
   @override

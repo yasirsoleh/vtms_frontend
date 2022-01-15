@@ -21,7 +21,7 @@ class ListUsersPage extends StatefulWidget {
 
 class _ListUsersPageState extends State<ListUsersPage> {
   final PagingController<Uri, User> _pagingController = PagingController(
-      firstPageKey: Uri.parse('http://10.0.2.2/api/users/list'));
+      firstPageKey: Uri.parse('http://192.168.0.139/api/users/list'));
 
   Future<PaginatedUsers> fetchNextPaginatedUsers(Uri next_page_url) async {
     Map<String, String> headers = {
@@ -116,7 +116,7 @@ class _ListUsersPageState extends State<ListUsersPage> {
 
   @override
   void dispose() {
-    _pagingController.dispose();
+    //_pagingController.dispose();
     super.dispose();
   }
 }

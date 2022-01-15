@@ -41,7 +41,7 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse('http://10.0.2.2/api/cameras/${widget.camera.id}'),
+        Uri.parse('http://192.168.0.139/api/cameras/${widget.camera.id}'),
         headers: headers);
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonDecoded = jsonDecode(response.body);
@@ -57,7 +57,7 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.delete(
-        Uri.parse('http://10.0.2.2/api/cameras/${widget.camera.id}'),
+        Uri.parse('http://192.168.0.139/api/cameras/${widget.camera.id}'),
         headers: headers);
 
     if (response.statusCode == 200) {
@@ -97,97 +97,149 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
     );
   }
 
+  Widget _columnIsAdmin(AsyncSnapshot snapshot) {
+    if (widget.currentUser.user.is_admin == "true") {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Camera Name',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.name,
+            textScaleFactor: 2,
+          ),
+          const Text(
+            'Token',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.plain_text_token!,
+            textScaleFactor: 2,
+          ),
+          const Text(
+            'Traffic Direction',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.traffic_direction,
+            textScaleFactor: 2,
+          ),
+          const Text(
+            'Latitude',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.latitude,
+            textScaleFactor: 2,
+          ),
+          const Text(
+            'Longitude',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.longitude,
+            textScaleFactor: 2,
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Camera Name',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.name,
+            textScaleFactor: 2,
+          ),
+          const Text(
+            'Traffic Direction',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.traffic_direction,
+            textScaleFactor: 2,
+          ),
+          const Text(
+            'Latitude',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.latitude,
+            textScaleFactor: 2,
+          ),
+          const Text(
+            'Longitude',
+            textScaleFactor: 1,
+          ),
+          Text(
+            snapshot.data!.longitude,
+            textScaleFactor: 2,
+          ),
+        ],
+      );
+    }
+  }
+
+  List<Widget> _createAppBarAction() {
+    if (widget.currentUser.user.is_admin != "true") {
+      return [];
+    } else {
+      return [
+        IconButton(
+          onPressed: () async {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditCameraPage(
+                  currentUser: widget.currentUser,
+                  camera: widget.camera,
+                ),
+              ),
+            ).then((_) {
+              setState(() {
+                futureCamera = fetchCamera();
+              });
+            });
+          },
+          icon: const Icon(Icons.edit),
+        ),
+        IconButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => _deletePopUp(context),
+            ).then(
+              (_) => Navigator.pop(context),
+            );
+          },
+          icon: const Icon(Icons.delete),
+        )
+      ];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Camera Details'),
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditCameraPage(
-                    currentUser: widget.currentUser,
-                    camera: widget.camera,
-                  ),
-                ),
-              ).then((_) {
-                setState(() {
-                  futureCamera = fetchCamera();
-                });
-              });
-            },
-            icon: const Icon(Icons.edit),
-          ),
-          IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => _deletePopUp(context),
-              ).then(
-                (_) => Navigator.pop(context),
-              );
-            },
-            icon: const Icon(Icons.delete),
-          )
-        ],
+        actions: _createAppBarAction(),
       ),
       body: FutureBuilder<Camera>(
         future: futureCamera,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Camera Name',
-                    textScaleFactor: 1,
-                  ),
-                  Text(
-                    snapshot.data!.name,
-                    textScaleFactor: 2,
-                  ),
-                  const Text(
-                    'Token',
-                    textScaleFactor: 1,
-                  ),
-                  Text(
-                    snapshot.data!.plain_text_token!,
-                    textScaleFactor: 2,
-                  ),
-                  const Text(
-                    'Traffic Direction',
-                    textScaleFactor: 1,
-                  ),
-                  Text(
-                    snapshot.data!.traffic_direction,
-                    textScaleFactor: 2,
-                  ),
-                  const Text(
-                    'Latitude',
-                    textScaleFactor: 1,
-                  ),
-                  Text(
-                    snapshot.data!.latitude,
-                    textScaleFactor: 2,
-                  ),
-                  const Text(
-                    'Longitude',
-                    textScaleFactor: 1,
-                  ),
-                  Text(
-                    snapshot.data!.longitude,
-                    textScaleFactor: 2,
-                  ),
-                ],
-              ),
-            );
+                padding: const EdgeInsets.all(8.0),
+                child: _columnIsAdmin(snapshot));
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }

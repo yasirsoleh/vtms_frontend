@@ -31,7 +31,7 @@ class _ListRoutesPageState extends State<ListRoutesPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse("http://10.0.2.2/api/detections/plate_numbers/list"),
+        Uri.parse("http://192.168.0.139/api/detections/plate_numbers/list"),
         headers: headers);
 
     if (response.statusCode == 200) {

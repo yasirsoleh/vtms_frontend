@@ -20,8 +20,8 @@ class ListCamerasPage extends StatefulWidget {
 }
 
 class _ListCamerasPageState extends State<ListCamerasPage> {
-  final PagingController<Uri, Camera> _pagingController =
-      PagingController(firstPageKey: Uri.parse('http://10.0.2.2/api/cameras'));
+  final PagingController<Uri, Camera> _pagingController = PagingController(
+      firstPageKey: Uri.parse('http://192.168.0.139/api/cameras'));
 
   Future<PaginatedCameras> fetchNextPaginatedUsers(Uri next) async {
     Map<String, String> headers = {
@@ -63,7 +63,7 @@ class _ListCamerasPageState extends State<ListCamerasPage> {
   @override
   void dispose() {
     super.dispose();
-    _pagingController.dispose();
+    //_pagingController.dispose();
   }
 
   @override

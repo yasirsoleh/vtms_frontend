@@ -27,14 +27,14 @@ class _ListDetectionsPageState extends State<ListDetectionsPage> {
   // PusherClient pusher = PusherClient(
   //   'app-key',
   //   PusherOptions(
-  //     host: '10.0.2.2',
+  //     host: '192.168.0.139',
   //     wsPort: 6001,
   //     encrypted: false,
   //   ),
   // );
 
   final PagingController<Uri, Detection> _pagingController = PagingController(
-      firstPageKey: Uri.parse('http://10.0.2.2/api/detections'));
+      firstPageKey: Uri.parse('http://192.168.0.139/api/detections'));
 
   Future<PaginatedDetections> fetchNextPaginatedUsers(Uri next) async {
     Map<String, String> headers = {
@@ -87,7 +87,7 @@ class _ListDetectionsPageState extends State<ListDetectionsPage> {
     super.dispose();
     pusher.unsubscribe("detections");
     pusher.disconnect();
-    _pagingController.dispose();
+    //_pagingController.dispose();
   }
 
   @override
