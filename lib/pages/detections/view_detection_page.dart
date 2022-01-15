@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vtms_frontend/models/current_user.dart';
 import 'package:vtms_frontend/models/detection.dart';
 import 'package:vtms_frontend/models/detection_with_camera.dart';
@@ -21,6 +23,7 @@ class ViewDetectionPage extends StatefulWidget {
 
 class _ViewDetectionPageState extends State<ViewDetectionPage> {
   late Future<DetectionWithCamera> futureDetectionWithCamera;
+  final Completer<GoogleMapController> _controller = Completer();
 
   @override
   void initState() {
@@ -55,46 +58,75 @@ class _ViewDetectionPageState extends State<ViewDetectionPage> {
         future: futureDetectionWithCamera,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Plate Number',
-                    textScaleFactor: 1,
+            CameraPosition _initPos = CameraPosition(
+                target: LatLng(
+                  double.parse(snapshot.data!.camera.latitude),
+                  double.parse(snapshot.data!.camera.longitude),
+                ),
+                zoom: 16);
+            Marker marker = Marker(
+                markerId: MarkerId(snapshot.data!.camera.id),
+                position: LatLng(
+                  double.parse(snapshot.data!.camera.latitude),
+                  double.parse(snapshot.data!.camera.longitude),
+                ),
+                infoWindow: InfoWindow(
+                  title: snapshot.data!.camera.name,
+                  snippet: snapshot.data!.created_at.toLocal().toString(),
+                ));
+            Set<Marker> markers = {marker};
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Plate Number',
+                  textScaleFactor: 1.5,
+                ),
+                Text(
+                  snapshot.data!.plate_number,
+                  textScaleFactor: 2,
+                ),
+                const Text(
+                  'Timestamp',
+                  textScaleFactor: 1.5,
+                ),
+                Text(
+                  snapshot.data!.created_at.toLocal().toString(),
+                  textScaleFactor: 2,
+                ),
+                const Text(
+                  'Camera Name',
+                  textScaleFactor: 1.5,
+                ),
+                Text(
+                  snapshot.data!.camera.name,
+                  textScaleFactor: 2,
+                ),
+                const Text(
+                  'Direction',
+                  textScaleFactor: 1.5,
+                ),
+                Text(
+                  snapshot.data!.camera.traffic_direction,
+                  textScaleFactor: 2,
+                ),
+                const Text(
+                  'Location',
+                  textScaleFactor: 1.5,
+                ),
+                SizedBox(
+                  height: 300,
+                  child: GoogleMap(
+                    mapType: MapType.hybrid,
+                    initialCameraPosition: _initPos,
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                    markers: markers,
                   ),
-                  Text(
-                    snapshot.data!.plate_number,
-                    textScaleFactor: 2,
-                  ),
-                  const Text(
-                    'Timestamp',
-                    textScaleFactor: 1,
-                  ),
-                  Text(
-                    snapshot.data!.created_at.toString(),
-                    textScaleFactor: 2,
-                  ),
-                  const Text(
-                    'Camera Name',
-                    textScaleFactor: 1,
-                  ),
-                  Text(
-                    snapshot.data!.camera.name,
-                    textScaleFactor: 2,
-                  ),
-                  const Text(
-                    'Direction',
-                    textScaleFactor: 1,
-                  ),
-                  Text(
-                    snapshot.data!.camera.traffic_direction,
-                    textScaleFactor: 2,
-                  ),
-                ],
-              ),
+                ),
+              ],
             );
           } else if (snapshot.hasError) {
             return Center(child: Text("${snapshot.error}"));

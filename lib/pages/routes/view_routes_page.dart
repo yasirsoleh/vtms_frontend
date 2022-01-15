@@ -91,7 +91,7 @@ class _ViewRoutePageState extends State<ViewRoutePage> {
                   double.parse(snapshot.data!.elementAt(0).camera.latitude),
                   double.parse(snapshot.data!.elementAt(0).camera.longitude),
                 ),
-                zoom: 16);
+                zoom: 14);
             //return Text(snapshot.data!.elementAt(0).camera.name);
             return GoogleMap(
               mapType: MapType.hybrid,

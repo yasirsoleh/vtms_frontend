@@ -2,10 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:vtms_frontend/models/current_user.dart';
-import 'package:vtms_frontend/models/detection.dart';
-import 'package:vtms_frontend/models/paginated_detections.dart';
 import 'package:http/http.dart' as http;
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:vtms_frontend/pages/routes/view_routes_page.dart';
 
 class ListRoutesPage extends StatefulWidget {
@@ -20,81 +17,79 @@ class ListRoutesPage extends StatefulWidget {
 }
 
 class _ListRoutesPageState extends State<ListRoutesPage> {
-  final PagingController<Uri, Detection> _pagingController = PagingController(
-      firstPageKey:
-          Uri.parse('http://10.0.2.2/api/detections/plate_numbers/list'));
+  late Future<List<String>> futureListPlateNumbers;
+  void showSnackBar(String snackBarMessage) {
+    SnackBar snackBar = SnackBar(
+      content: Text(snackBarMessage),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 
-  Future<PaginatedDetections> fetchNextPaginatedUsers(Uri next) async {
+  Future<List<String>> fetchListPlateNumbers() async {
     Map<String, String> headers = {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http.get(next, headers: headers);
+    final response = await http.get(
+        Uri.parse("http://10.0.2.2/api/detections/plate_numbers/list"),
+        headers: headers);
 
     if (response.statusCode == 200) {
-      return PaginatedDetections.fromJson(jsonDecode(response.body));
+      List<dynamic> decoded = jsonDecode(response.body);
+      return decoded.map((e) => e.toString()).toList();
     } else {
-      throw Exception('Failed to load cameras');
-    }
-  }
-
-  Future<void> _fetchPage(Uri pageKey) async {
-    try {
-      final newPaginatedDetections = await fetchNextPaginatedUsers(pageKey);
-      final isLastPage = newPaginatedDetections.next_page_url == null;
-      if (isLastPage) {
-        _pagingController.appendLastPage(newPaginatedDetections.data);
-      } else {
-        _pagingController.appendPage(
-            newPaginatedDetections.data, newPaginatedDetections.next_page_url);
-      }
-    } catch (error) {
-      _pagingController.error = error;
+      throw Exception('Failed to load routes');
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+    futureListPlateNumbers = fetchListPlateNumbers();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _pagingController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return PagedListView<Uri, Detection>.separated(
-      pagingController: _pagingController,
-      builderDelegate: PagedChildBuilderDelegate<Detection>(
-        itemBuilder: (context, item, index) => ListTile(
-          title: Text(item.plate_number),
-          trailing: const Icon(Icons.arrow_forward_ios),
-          subtitle: Text(item.created_at.toLocal().toString()),
-          onTap: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ViewRoutePage(
-                  currentUser: widget.currentUser,
-                  plate_number: item.plate_number,
-                ),
-              ),
-            ).then((_) {
-              setState(() {
-                _pagingController.refresh();
-              });
-            });
-          },
-        ),
-      ),
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider(height: 2);
+    return FutureBuilder<List<String>>(
+      future: futureListPlateNumbers,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.separated(
+            itemCount: snapshot.data!.length,
+            separatorBuilder: (BuildContext context, int index) {
+              return const Divider(height: 2);
+            },
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(snapshot.data![index]),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ViewRoutePage(
+                        currentUser: widget.currentUser,
+                        plate_number: snapshot.data![index],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+
+        // By default, show a loading spinner.
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }
