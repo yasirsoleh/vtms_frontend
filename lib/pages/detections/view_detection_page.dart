@@ -126,7 +126,7 @@ class _ViewDetectionPageState extends State<ViewDetectionPage> {
                 ),
                 Flexible(
                   child: GoogleMap(
-                    mapType: MapType.hybrid,
+                    mapType: MapType.normal,
                     initialCameraPosition: _initPos,
                     onMapCreated: (GoogleMapController controller) {
                       _controller.complete(controller);

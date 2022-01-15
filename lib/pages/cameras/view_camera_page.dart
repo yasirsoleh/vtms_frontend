@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vtms_frontend/models/camera.dart';
 import 'package:vtms_frontend/models/current_user.dart';
 import 'package:vtms_frontend/pages/cameras/edit_camera_page.dart';
@@ -21,6 +23,7 @@ class ViewCameraPage extends StatefulWidget {
 
 class _ViewCameraPageState extends State<ViewCameraPage> {
   late Future<Camera> futureCamera;
+  final Completer<GoogleMapController> _controller = Completer();
 
   @override
   void initState() {
@@ -237,9 +240,47 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
         future: futureCamera,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _columnIsAdmin(snapshot));
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _columnIsAdmin(snapshot),
+                ),
+                Flexible(
+                  child: GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(
+                        double.parse(snapshot.data!.latitude),
+                        double.parse(snapshot.data!.longitude),
+                      ),
+                      zoom: 15,
+                    ),
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                    scrollGesturesEnabled: false,
+                    zoomGesturesEnabled: false,
+                    tiltGesturesEnabled: false,
+                    rotateGesturesEnabled: false,
+                    zoomControlsEnabled: false,
+                    markers: {
+                      Marker(
+                        markerId: MarkerId(snapshot.data!.id),
+                        position: LatLng(
+                          double.parse(snapshot.data!.latitude),
+                          double.parse(snapshot.data!.longitude),
+                        ),
+                        infoWindow: InfoWindow(
+                          title: snapshot.data!.name,
+                          snippet: snapshot.data!.traffic_direction,
+                        ),
+                      )
+                    },
+                  ),
+                ),
+              ],
+            );
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }

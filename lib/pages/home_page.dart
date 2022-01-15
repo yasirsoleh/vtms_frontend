@@ -6,6 +6,7 @@ import 'package:vtms_frontend/models/current_user.dart';
 import 'package:vtms_frontend/models/user.dart';
 import 'package:vtms_frontend/pages/cameras/add_camera_page.dart';
 import 'package:vtms_frontend/pages/cameras/list_cameras_page.dart';
+import 'package:vtms_frontend/pages/cameras/search_camera_page.dart';
 import 'package:vtms_frontend/pages/detections/list_detections_page.dart';
 import 'package:vtms_frontend/pages/routes/list_routes_page.dart';
 import 'package:vtms_frontend/pages/users/change_password_user_page.dart';
@@ -148,7 +149,16 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(Icons.add),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchCameraPage(
+                      currentUser: widget.currentUser,
+                    ),
+                  ),
+                ).then((value) {});
+              },
               icon: const Icon(Icons.search),
             ),
           ];

@@ -1,8 +1,10 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vtms_frontend/models/camera.dart';
 import 'package:vtms_frontend/models/current_user.dart';
 import 'package:http/http.dart' as http;
@@ -22,17 +24,26 @@ class EditCameraPage extends StatefulWidget {
 
 class _EditCameraPageState extends State<EditCameraPage> {
   final _formEditCamera = GlobalKey<FormState>();
-  final _name = TextEditingController();
-  final _latitude = TextEditingController();
-  final _longitude = TextEditingController();
+  final name = TextEditingController();
+  final latitude = TextEditingController();
+  final longitude = TextEditingController();
   late String _traffic_direction;
-
+  final Completer<GoogleMapController> _controller = Completer();
+  late LatLng _initialMarkerPosition;
   late Future<Camera> futureCamera;
 
   @override
   void initState() {
     super.initState();
     futureCamera = fetchCamera();
+    _initialMarkerPosition = LatLng(
+      double.parse(widget.camera.latitude),
+      double.parse(widget.camera.longitude),
+    );
+    name.text = widget.camera.name;
+    _traffic_direction = widget.camera.traffic_direction;
+    latitude.text = widget.camera.latitude;
+    longitude.text = widget.camera.longitude;
   }
 
   void showSnackBar(String snackBarMessage) {
@@ -66,10 +77,10 @@ class _EditCameraPageState extends State<EditCameraPage> {
     };
 
     Map<String, String> body = {
-      "name": _name.text,
+      "name": name.text,
       "traffic_direction": _traffic_direction,
-      "latitude": _latitude.text,
-      "longitude": _longitude.text,
+      "latitude": latitude.text,
+      "longitude": longitude.text,
     };
 
     final response = await http.put(
@@ -110,106 +121,119 @@ class _EditCameraPageState extends State<EditCameraPage> {
           ),
         ],
       ),
-      body: FutureBuilder<Camera>(
-        future: futureCamera,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            _name.text = snapshot.data!.name;
-            _traffic_direction = snapshot.data!.traffic_direction;
-            _latitude.text = snapshot.data!.latitude;
-            _longitude.text = snapshot.data!.longitude;
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                key: _formEditCamera,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Camera Name',
-                      ),
-                      controller: _name,
-                      validator: (String? name) {
-                        if (name == null || name.isEmpty) {
-                          return 'Please enter camera name';
-                        }
-                        return null;
-                      },
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+              key: _formEditCamera,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Camera Name',
                     ),
-                    DropdownButtonFormField(
-                      value: _traffic_direction,
-                      decoration: const InputDecoration(
-                        labelText: 'Traffic Direction',
-                      ),
-                      icon: const Icon(Icons.arrow_downward),
-                      items: [
-                        DropdownMenuItem(
-                          child: const Text('inbound'),
-                          value: 'inbound',
-                          onTap: () {
-                            setState(() {
-                              _traffic_direction = 'inbound';
-                            });
-                          },
-                        ),
-                        DropdownMenuItem(
-                          child: const Text('outbound'),
-                          value: 'outbound',
-                          onTap: () {
-                            setState(() {
-                              _traffic_direction = 'outbound';
-                            });
-                          },
-                        )
-                      ],
-                      onChanged: (String? traffic_direction) {
-                        setState(() {
-                          _traffic_direction = traffic_direction!;
-                        });
-                      },
-                      onSaved: (String? traffic_direction) {
-                        setState(() {
-                          _traffic_direction = traffic_direction!;
-                        });
-                      },
+                    controller: name,
+                    validator: (String? name) {
+                      if (name == null || name.isEmpty) {
+                        return 'Please enter camera name';
+                      }
+                      return null;
+                    },
+                  ),
+                  DropdownButtonFormField(
+                    value: _traffic_direction,
+                    decoration: const InputDecoration(
+                      labelText: 'Traffic Direction',
                     ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Latitude',
+                    icon: const Icon(Icons.arrow_downward),
+                    items: [
+                      DropdownMenuItem(
+                        child: const Text('inbound'),
+                        value: 'inbound',
+                        onTap: () {
+                          setState(() {
+                            _traffic_direction = 'inbound';
+                          });
+                        },
                       ),
-                      controller: _latitude,
-                      validator: (String? latitude) {
-                        if (latitude == null || latitude.isEmpty) {
-                          return 'Please enter camera latitude';
-                        }
-                        return null;
-                      },
+                      DropdownMenuItem(
+                        child: const Text('outbound'),
+                        value: 'outbound',
+                        onTap: () {
+                          setState(() {
+                            _traffic_direction = 'outbound';
+                          });
+                        },
+                      )
+                    ],
+                    onChanged: (String? traffic_direction) {
+                      setState(() {
+                        _traffic_direction = traffic_direction!;
+                      });
+                    },
+                    onSaved: (String? traffic_direction) {
+                      setState(() {
+                        _traffic_direction = traffic_direction!;
+                      });
+                    },
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Latitude',
                     ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Longitude',
-                      ),
-                      controller: _longitude,
-                      validator: (String? longitude) {
-                        if (longitude == null || longitude.isEmpty) {
-                          return 'Please enter camera longitude';
-                        }
-                        return null;
-                      },
+                    controller: latitude,
+                    validator: (String? latitude) {
+                      if (latitude == null || latitude.isEmpty) {
+                        return 'Please enter camera latitude';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Longitude',
                     ),
-                  ],
-                ),
+                    controller: longitude,
+                    validator: (String? longitude) {
+                      if (longitude == null || longitude.isEmpty) {
+                        return 'Please enter camera longitude';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
-            );
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+            ),
+          ),
+          Flexible(
+            child: GoogleMap(
+              mapType: MapType.normal,
+              initialCameraPosition: CameraPosition(
+                target: _initialMarkerPosition,
+                zoom: 15,
+              ),
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+              markers: {
+                Marker(
+                  markerId: const MarkerId('current_position'),
+                  position: _initialMarkerPosition,
+                  draggable: true,
+                  onDragEnd: (value) {
+                    setState(() {
+                      latitude.text = value.latitude.toString();
+                      longitude.text = value.longitude.toString();
+                    });
+                  },
+                ),
+              },
+            ),
+          )
+        ],
       ),
     );
   }

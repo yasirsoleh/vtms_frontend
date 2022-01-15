@@ -24,6 +24,8 @@ class _AddCameraPageState extends State<AddCameraPage> {
   String traffic_direction = 'inbound';
   final _formAddCamera = GlobalKey<FormState>();
   final Completer<GoogleMapController> _controller = Completer();
+  late Future<LatLng> initialPosition;
+  late LatLng _initialMarkerPosition;
 
   @override
   void dispose() {
@@ -36,7 +38,7 @@ class _AddCameraPageState extends State<AddCameraPage> {
   @override
   void initState() {
     super.initState();
-    _getInitialPosition();
+    initialPosition = _getInitialPosition();
   }
 
   void showSnackBar(String snackBarMessage) {
@@ -181,11 +183,13 @@ class _AddCameraPageState extends State<AddCameraPage> {
           ),
           Flexible(
             child: FutureBuilder<LatLng>(
-              future: _getInitialPosition(),
+              future: initialPosition,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  _initialMarkerPosition =
+                      LatLng(snapshot.data!.latitude, snapshot.data!.longitude);
                   return GoogleMap(
-                    mapType: MapType.hybrid,
+                    mapType: MapType.normal,
                     initialCameraPosition: CameraPosition(
                       target: LatLng(
                           snapshot.data!.latitude, snapshot.data!.longitude),
@@ -197,8 +201,15 @@ class _AddCameraPageState extends State<AddCameraPage> {
                     markers: {
                       Marker(
                         markerId: const MarkerId('current_position'),
-                        position: LatLng(
-                            snapshot.data!.latitude, snapshot.data!.longitude),
+                        position: _initialMarkerPosition,
+                        draggable: true,
+                        anchor: const Offset(0.5, 0.5),
+                        onDragEnd: (value) {
+                          setState(() {
+                            latitude.text = value.latitude.toString();
+                            longitude.text = value.longitude.toString();
+                          });
+                        },
                       ),
                     },
                   );
