@@ -37,8 +37,8 @@ class _HomePageState extends State<HomePage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http
-        .get(Uri.parse('http://192.168.0.139/api/users/'), headers: headers);
+    final response = await http.get(Uri.parse('http://vtms.online/api/users/'),
+        headers: headers);
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse('http://192.168.0.139/api/users/logout'),
+        Uri.parse('http://vtms.online/api/users/logout'),
         headers: headers);
 
     if (response.statusCode == 200) {

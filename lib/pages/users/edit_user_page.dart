@@ -52,7 +52,7 @@ class _EditUserPageState extends State<EditUserPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse('http://192.168.0.139/api/users/${widget.user.id}'),
+        Uri.parse('http://vtms.online/api/users/${widget.user.id}'),
         headers: headers);
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
@@ -73,7 +73,7 @@ class _EditUserPageState extends State<EditUserPage> {
     };
 
     final response = await http.put(
-        Uri.parse('http://192.168.0.139/api/users/${widget.user.id}'),
+        Uri.parse('http://vtms.online/api/users/${widget.user.id}'),
         headers: headers,
         body: body);
 

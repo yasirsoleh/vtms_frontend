@@ -21,7 +21,7 @@ class ListCamerasPage extends StatefulWidget {
 
 class _ListCamerasPageState extends State<ListCamerasPage> {
   final PagingController<Uri, Camera> _pagingController = PagingController(
-      firstPageKey: Uri.parse('http://192.168.0.139/api/cameras'));
+      firstPageKey: Uri.parse('http://vtms.online/api/cameras'));
 
   Future<PaginatedCameras> fetchNextPaginatedUsers(Uri next) async {
     Map<String, String> headers = {
@@ -68,32 +68,37 @@ class _ListCamerasPageState extends State<ListCamerasPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PagedListView<Uri, Camera>.separated(
-      pagingController: _pagingController,
-      builderDelegate: PagedChildBuilderDelegate<Camera>(
-        itemBuilder: (context, item, index) => ListTile(
-          title: Text(item.name),
-          trailing: const Icon(Icons.arrow_forward_ios),
-          onTap: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ViewCameraPage(
-                  currentUser: widget.currentUser,
-                  camera: item,
-                ),
-              ),
-            ).then((_) {
-              setState(() {
-                _pagingController.refresh();
-              });
-            });
-          },
-        ),
+    return RefreshIndicator(
+      onRefresh: () => Future.sync(
+        () => _pagingController.refresh(),
       ),
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider(height: 2);
-      },
+      child: PagedListView<Uri, Camera>.separated(
+        pagingController: _pagingController,
+        builderDelegate: PagedChildBuilderDelegate<Camera>(
+          itemBuilder: (context, item, index) => ListTile(
+            title: Text(item.name),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewCameraPage(
+                    currentUser: widget.currentUser,
+                    camera: item,
+                  ),
+                ),
+              ).then((_) {
+                setState(() {
+                  _pagingController.refresh();
+                });
+              });
+            },
+          ),
+        ),
+        separatorBuilder: (BuildContext context, int index) {
+          return const Divider(height: 2);
+        },
+      ),
     );
   }
 }

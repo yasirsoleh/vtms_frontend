@@ -48,7 +48,7 @@ class _ViewRoutePageState extends State<ViewRoutePage> {
     };
     final response = await http.get(
         Uri.parse(
-            'http://192.168.0.139/api/detections/plate_numbers/show/${widget.plate_number}'),
+            'http://vtms.online/api/detections/plate_numbers/show/${widget.plate_number}'),
         headers: headers);
     if (response.statusCode == 200) {
       List jsonDecoded = jsonDecode(response.body);

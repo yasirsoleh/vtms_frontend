@@ -28,12 +28,12 @@ class _SearchRoutesPageState extends State<SearchRoutesPage> {
     final http.Response response;
     if (name.text == '') {
       response = await http.get(
-          Uri.parse("http://192.168.0.139/api/detections/plate_numbers/search"),
+          Uri.parse("http://vtms.online/api/detections/plate_numbers/search"),
           headers: headers);
     } else {
       response = await http.get(
           Uri.parse(
-              "http://192.168.0.139/api/detections/plate_numbers/search/${name.text}"),
+              "http://vtms.online/api/detections/plate_numbers/search/${name.text}"),
           headers: headers);
     }
 

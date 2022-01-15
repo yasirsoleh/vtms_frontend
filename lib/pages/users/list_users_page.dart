@@ -21,7 +21,7 @@ class ListUsersPage extends StatefulWidget {
 
 class _ListUsersPageState extends State<ListUsersPage> {
   final PagingController<Uri, User> _pagingController = PagingController(
-      firstPageKey: Uri.parse('http://192.168.0.139/api/users/list'));
+      firstPageKey: Uri.parse('http://vtms.online/api/users/list'));
 
   Future<PaginatedUsers> fetchNextPaginatedUsers(Uri next_page_url) async {
     Map<String, String> headers = {
@@ -84,32 +84,37 @@ class _ListUsersPageState extends State<ListUsersPage> {
           ),
         ],
       ),
-      body: PagedListView<Uri, User>.separated(
-        pagingController: _pagingController,
-        builderDelegate: PagedChildBuilderDelegate<User>(
-          itemBuilder: (context, item, index) => ListTile(
-            title: Text(item.name),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewUserPage(
-                    currentUser: widget.currentUser,
-                    user: item,
-                  ),
-                ),
-              ).then((_) {
-                setState(() {
-                  _pagingController.refresh();
-                });
-              });
-            },
-          ),
+      body: RefreshIndicator(
+        onRefresh: () => Future.sync(
+          () => _pagingController.refresh(),
         ),
-        separatorBuilder: (BuildContext context, int index) {
-          return const Divider(height: 2);
-        },
+        child: PagedListView<Uri, User>.separated(
+          pagingController: _pagingController,
+          builderDelegate: PagedChildBuilderDelegate<User>(
+            itemBuilder: (context, item, index) => ListTile(
+              title: Text(item.name),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ViewUserPage(
+                      currentUser: widget.currentUser,
+                      user: item,
+                    ),
+                  ),
+                ).then((_) {
+                  setState(() {
+                    _pagingController.refresh();
+                  });
+                });
+              },
+            ),
+          ),
+          separatorBuilder: (BuildContext context, int index) {
+            return const Divider(height: 2);
+          },
+        ),
       ),
     );
   }

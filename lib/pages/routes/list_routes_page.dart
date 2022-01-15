@@ -31,7 +31,7 @@ class _ListRoutesPageState extends State<ListRoutesPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse("http://192.168.0.139/api/detections/plate_numbers/list"),
+        Uri.parse("http://vtms.online/api/detections/plate_numbers/list"),
         headers: headers);
 
     if (response.statusCode == 200) {
@@ -55,42 +55,47 @@ class _ListRoutesPageState extends State<ListRoutesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-      future: futureListPlateNumbers,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ListView.separated(
-            itemCount: snapshot.data!.length,
-            separatorBuilder: (BuildContext context, int index) {
-              return const Divider(height: 2);
-            },
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(snapshot.data![index]),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ViewRoutePage(
-                        currentUser: widget.currentUser,
-                        plate_number: snapshot.data![index],
+    return RefreshIndicator(
+      onRefresh: () => Future.sync(
+        () => futureListPlateNumbers = fetchListPlateNumbers(),
+      ),
+      child: FutureBuilder<List<String>>(
+        future: futureListPlateNumbers,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.separated(
+              itemCount: snapshot.data!.length,
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider(height: 2);
+              },
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(snapshot.data![index]),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ViewRoutePage(
+                          currentUser: widget.currentUser,
+                          plate_number: snapshot.data![index],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
+                    );
+                  },
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
 
-        // By default, show a loading spinner.
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
+          // By default, show a loading spinner.
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
     );
   }
 }

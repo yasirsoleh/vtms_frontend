@@ -63,7 +63,7 @@ class _AddCameraPageState extends State<AddCameraPage> {
     };
 
     final response = await http.post(
-        Uri.parse('http://192.168.0.139/api/cameras'),
+        Uri.parse('http://vtms.online/api/cameras'),
         headers: headers,
         body: body);
 

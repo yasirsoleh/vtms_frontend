@@ -44,7 +44,7 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.get(
-        Uri.parse('http://192.168.0.139/api/cameras/${widget.camera.id}'),
+        Uri.parse('http://vtms.online/api/cameras/${widget.camera.id}'),
         headers: headers);
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonDecoded = jsonDecode(response.body);
@@ -60,7 +60,7 @@ class _ViewCameraPageState extends State<ViewCameraPage> {
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
     final response = await http.delete(
-        Uri.parse('http://192.168.0.139/api/cameras/${widget.camera.id}'),
+        Uri.parse('http://vtms.online/api/cameras/${widget.camera.id}'),
         headers: headers);
 
     if (response.statusCode == 200) {

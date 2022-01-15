@@ -48,7 +48,7 @@ class _ChangePasswordUserPageState extends State<ChangePasswordUserPage> {
     };
 
     final response = await http.post(
-        Uri.parse('http://192.168.0.139/api/users/change_password'),
+        Uri.parse('http://vtms.online/api/users/change_password'),
         headers: headers,
         body: body);
 

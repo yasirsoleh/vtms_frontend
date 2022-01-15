@@ -29,11 +29,11 @@ class _SearchCamerasPageState extends State<SearchCamerasPage> {
     final http.Response response;
     if (name.text == '') {
       response = await http.get(
-          Uri.parse("http://192.168.0.139/api/cameras/search"),
+          Uri.parse("http://vtms.online/api/cameras/search"),
           headers: headers);
     } else {
       response = await http.get(
-          Uri.parse("http://192.168.0.139/api/cameras/search/${name.text}"),
+          Uri.parse("http://vtms.online/api/cameras/search/${name.text}"),
           headers: headers);
     }
 

@@ -39,8 +39,8 @@ class _ViewProfileUserPageState extends State<ViewProfileUserPage> {
       "Accept": "application/json",
       "Authorization": "Bearer ${widget.currentUser.token}",
     };
-    final response = await http
-        .get(Uri.parse('http://192.168.0.139/api/users/'), headers: headers);
+    final response = await http.get(Uri.parse('http://vtms.online/api/users/'),
+        headers: headers);
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));

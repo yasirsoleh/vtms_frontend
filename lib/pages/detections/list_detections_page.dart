@@ -28,14 +28,14 @@ class _ListDetectionsPageState extends State<ListDetectionsPage> {
   // PusherClient pusher = PusherClient(
   //   'app-key',
   //   PusherOptions(
-  //     host: '192.168.0.139',
+  //     host: 'vtms.online',
   //     wsPort: 6001,
   //     encrypted: false,
   //   ),
   // );
 
   final PagingController<Uri, Detection> _pagingController = PagingController(
-      firstPageKey: Uri.parse('http://192.168.0.139/api/detections'));
+      firstPageKey: Uri.parse('http://vtms.online/api/detections'));
 
   Future<PaginatedDetections> fetchNextPaginatedUsers(Uri next) async {
     Map<String, String> headers = {
@@ -93,33 +93,38 @@ class _ListDetectionsPageState extends State<ListDetectionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PagedListView<Uri, Detection>.separated(
-      pagingController: _pagingController,
-      builderDelegate: PagedChildBuilderDelegate<Detection>(
-        itemBuilder: (context, item, index) => ListTile(
-          title: Text(item.plate_number),
-          trailing: const Icon(Icons.arrow_forward_ios),
-          subtitle: Text(item.created_at.toLocal().toString()),
-          onTap: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ViewDetectionPage(
-                  currentUser: widget.currentUser,
-                  detection: item,
-                ),
-              ),
-            ).then((_) {
-              setState(() {
-                _pagingController.refresh();
-              });
-            });
-          },
-        ),
+    return RefreshIndicator(
+      onRefresh: () => Future.sync(
+        () => _pagingController.refresh(),
       ),
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider(height: 2);
-      },
+      child: PagedListView<Uri, Detection>.separated(
+        pagingController: _pagingController,
+        builderDelegate: PagedChildBuilderDelegate<Detection>(
+          itemBuilder: (context, item, index) => ListTile(
+            title: Text(item.plate_number),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            subtitle: Text(item.created_at.toLocal().toString()),
+            onTap: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewDetectionPage(
+                    currentUser: widget.currentUser,
+                    detection: item,
+                  ),
+                ),
+              ).then((_) {
+                setState(() {
+                  _pagingController.refresh();
+                });
+              });
+            },
+          ),
+        ),
+        separatorBuilder: (BuildContext context, int index) {
+          return const Divider(height: 2);
+        },
+      ),
     );
   }
 }

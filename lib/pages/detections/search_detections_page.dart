@@ -29,11 +29,11 @@ class _SearchDetectionPageState extends State<SearchDetectionPage> {
     final http.Response response;
     if (name.text == '') {
       response = await http.get(
-          Uri.parse("http://192.168.0.139/api/detections/search"),
+          Uri.parse("http://vtms.online/api/detections/search"),
           headers: headers);
     } else {
       response = await http.get(
-          Uri.parse("http://192.168.0.139/api/detections/search/${name.text}"),
+          Uri.parse("http://vtms.online/api/detections/search/${name.text}"),
           headers: headers);
     }
 

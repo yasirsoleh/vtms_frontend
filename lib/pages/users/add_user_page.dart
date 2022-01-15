@@ -54,10 +54,8 @@ class _AddUserPageState extends State<AddUserPage> {
       "password_confirmation": password_confirmation.text,
     };
 
-    final response = await http.post(
-        Uri.parse('http://192.168.0.139/api/users'),
-        headers: headers,
-        body: body);
+    final response = await http.post(Uri.parse('http://vtms.online/api/users'),
+        headers: headers, body: body);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> message = jsonDecode(response.body);
