@@ -79,44 +79,52 @@ class _ViewDetectionPageState extends State<ViewDetectionPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Plate Number',
-                  textScaleFactor: 1.5,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Plate Number',
+                        textScaleFactor: 1,
+                      ),
+                      Text(
+                        snapshot.data!.plate_number,
+                        textScaleFactor: 2,
+                      ),
+                      const Text(
+                        'Timestamp',
+                        textScaleFactor: 1,
+                      ),
+                      Text(
+                        snapshot.data!.created_at.toLocal().toString(),
+                        textScaleFactor: 2,
+                      ),
+                      const Text(
+                        'Camera Name',
+                        textScaleFactor: 1,
+                      ),
+                      Text(
+                        snapshot.data!.camera.name,
+                        textScaleFactor: 2,
+                      ),
+                      const Text(
+                        'Direction',
+                        textScaleFactor: 1,
+                      ),
+                      Text(
+                        snapshot.data!.camera.traffic_direction,
+                        textScaleFactor: 2,
+                      ),
+                      const Text(
+                        'Location',
+                        textScaleFactor: 1,
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  snapshot.data!.plate_number,
-                  textScaleFactor: 2,
-                ),
-                const Text(
-                  'Timestamp',
-                  textScaleFactor: 1.5,
-                ),
-                Text(
-                  snapshot.data!.created_at.toLocal().toString(),
-                  textScaleFactor: 2,
-                ),
-                const Text(
-                  'Camera Name',
-                  textScaleFactor: 1.5,
-                ),
-                Text(
-                  snapshot.data!.camera.name,
-                  textScaleFactor: 2,
-                ),
-                const Text(
-                  'Direction',
-                  textScaleFactor: 1.5,
-                ),
-                Text(
-                  snapshot.data!.camera.traffic_direction,
-                  textScaleFactor: 2,
-                ),
-                const Text(
-                  'Location',
-                  textScaleFactor: 1.5,
-                ),
-                SizedBox(
-                  height: 300,
+                Flexible(
                   child: GoogleMap(
                     mapType: MapType.hybrid,
                     initialCameraPosition: _initPos,
@@ -131,7 +139,9 @@ class _ViewDetectionPageState extends State<ViewDetectionPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text("${snapshot.error}"));
           }
-          return const CircularProgressIndicator();
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );

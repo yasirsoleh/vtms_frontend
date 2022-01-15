@@ -168,7 +168,9 @@ class _ViewUserPageState extends State<ViewUserPage> {
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );

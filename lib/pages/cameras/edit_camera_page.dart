@@ -206,7 +206,9 @@ class _EditCameraPageState extends State<EditCameraPage> {
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );

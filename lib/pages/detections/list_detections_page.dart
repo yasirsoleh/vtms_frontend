@@ -24,6 +24,7 @@ class _ListDetectionsPageState extends State<ListDetectionsPage> {
   PusherClient pusher =
       PusherClient('6bd86204cf9ccf93e324', PusherOptions(cluster: 'ap1'));
 
+  // SOKETI STUFF
   // PusherClient pusher = PusherClient(
   //   'app-key',
   //   PusherOptions(

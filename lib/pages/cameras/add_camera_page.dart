@@ -179,14 +179,12 @@ class _AddCameraPageState extends State<AddCameraPage> {
               ),
             ),
           ),
-          FutureBuilder<LatLng>(
-            future: _getInitialPosition(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                print(snapshot.data.toString());
-                return SizedBox(
-                  height: 300,
-                  child: GoogleMap(
+          Flexible(
+            child: FutureBuilder<LatLng>(
+              future: _getInitialPosition(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return GoogleMap(
                     mapType: MapType.hybrid,
                     initialCameraPosition: CameraPosition(
                       target: LatLng(
@@ -203,13 +201,15 @@ class _AddCameraPageState extends State<AddCameraPage> {
                             snapshot.data!.latitude, snapshot.data!.longitude),
                       ),
                     },
-                  ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
+              },
+            ),
           ),
         ],
       ),

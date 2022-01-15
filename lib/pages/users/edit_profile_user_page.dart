@@ -139,7 +139,9 @@ class _EditProfileUserPageState extends State<EditProfileUserPage> {
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );
