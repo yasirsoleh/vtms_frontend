@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vtms_frontend/pages/users/login_page.dart';
+import 'package:vtms_frontend/pages/users/login_user_page.dart';
 
 void main() {
   runApp(const VtmsApp());
@@ -16,9 +16,7 @@ class VtmsApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      routes: <String, WidgetBuilder>{
-        '/': (BuildContext context) => const LoginPage()
-      },
+      home: const LoginUserPage(),
       debugShowCheckedModeBanner: false,
     );
   }
