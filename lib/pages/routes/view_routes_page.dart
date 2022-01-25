@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vtms_frontend/models/current_user.dart';
 import 'package:vtms_frontend/models/detection_with_camera.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 class ViewRoutePage extends StatefulWidget {
   final String plate_number;
@@ -33,11 +35,25 @@ class _ViewRoutePageState extends State<ViewRoutePage> {
   void initState() {
     super.initState();
     futureDetectionsWithCamera = fetchDetectionsWithCamera();
+    futureDetectionsWithCamera.then((value) => _fetchPolylinesForRoutes(value));
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  _fetchPolylinesForRoutes(List<DetectionWithCamera> detectionsWithCamera) {
+    detectionsWithCamera.sort(
+        (a, b) => a.created_at.toLocal().compareTo(b.created_at.toLocal()));
+
+    if (detectionsWithCamera.length > 1) {
+      for (var i = 0; i < detectionsWithCamera.length - 1; i++) {
+        _createPolylines(detectionsWithCamera.elementAt(i),
+            detectionsWithCamera.elementAt(i + 1));
+        print('looping $i');
+      }
+    }
   }
 
   Future<List<DetectionWithCamera>> fetchDetectionsWithCamera() async {
@@ -55,6 +71,51 @@ class _ViewRoutePageState extends State<ViewRoutePage> {
     } else {
       throw Exception('Failed to load detections');
     }
+  }
+
+  late PolylinePoints polylinePoints;
+  List<LatLng> polylineCoordinates = [];
+  Map<PolylineId, Polyline> polylines = {};
+
+  _createPolylines(
+      DetectionWithCamera start, DetectionWithCamera destination) async {
+    // Initializing PolylinePoints
+    polylinePoints = PolylinePoints();
+
+    // Generating the list of coordinates to be used for
+    // drawing the polylines
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      "AIzaSyAr45bUxXAtWl2UhR-CVZa1wVzhEnGh7Bg", // Google Maps API Key
+      PointLatLng(double.parse(start.camera.latitude),
+          double.parse(start.camera.longitude)),
+      PointLatLng(double.parse(destination.camera.latitude),
+          double.parse(destination.camera.longitude)),
+      travelMode: TravelMode.walking,
+    );
+
+    // Adding the coordinates to the list
+    if (result.points.isNotEmpty) {
+      for (var point in result.points) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      }
+    }
+
+    // Defining an ID
+    PolylineId id = PolylineId('${start.id}-to-${destination.id}');
+    Color _randomColor =
+        Colors.primaries[Random().nextInt(Colors.primaries.length)];
+    // Initializing Polyline
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: _randomColor,
+      points: polylineCoordinates,
+      width: 3,
+    );
+
+    // Adding the polyline to the map
+
+    polylines[id] = polyline;
+    setState(() {});
   }
 
   @override
@@ -87,10 +148,6 @@ class _ViewRoutePageState extends State<ViewRoutePage> {
               ),
             );
 
-            detectionsWithCamera = snapshot.data!;
-            detectionsWithCamera.sort((a, b) =>
-                a.created_at.toLocal().compareTo(b.created_at.toLocal()));
-
             CameraPosition _initPos = CameraPosition(
                 target: LatLng(
                   double.parse(snapshot.data!.elementAt(0).camera.latitude),
@@ -105,6 +162,7 @@ class _ViewRoutePageState extends State<ViewRoutePage> {
                 _controller.complete(controller);
               },
               markers: markers,
+              polylines: Set<Polyline>.of(polylines.values),
             );
           } else if (snapshot.hasError) {
             return Center(child: Text("${snapshot.error}"));
